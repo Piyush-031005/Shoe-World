@@ -122,20 +122,19 @@ html, body {
   transform: translate(3px, -1px);
 }
 
-/* ── Red/Blue/White Speed Lines (AC Motorsport style) ── */
-@keyframes speedLineHorizontal {
-  0% { transform: translateX(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateX(150vw); opacity: 0; }
+/* ── Superman-style Cinematic Beams animation ── */
+@keyframes beamSlide {
+  0%   { transform: translateX(0vw); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateX(160vw); opacity: 0; }
 }
 
+/* Legacy classes kept for compatibility */
 .speed-lines {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   pointer-events: none;
   z-index: 1;
   overflow: hidden;
