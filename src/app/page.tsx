@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Lenis from "lenis";
-import { useScramble } from "@/hooks/useScramble";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -19,20 +18,6 @@ const S = {
   fg: "#F0EDE8",
   fgDim: "rgba(240,237,232,0.45)",
 };
-
-function ScrambleText({ text, delay = 0, duration = 800 }: { text: string, delay?: number, duration?: number }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const scrambled = useScramble(text, delay, isHovered ? 400 : duration);
-  return (
-    <span 
-      onMouseEnter={() => setIsHovered(true)} 
-      onMouseLeave={() => setIsHovered(false)}
-      style={{ display: "inline-block" }}
-    >
-      {scrambled}
-    </span>
-  );
-}
 
 export default function Home() {
   const [engineReady, setEngineReady] = useState(false);
@@ -87,6 +72,16 @@ export default function Home() {
             y: (i: number) => -100 * (i + 1), // Different speed for each image
             ease: "none"
           });
+
+          // Continual slow rotation (floating effect)
+          gsap.to(imgs, {
+            rotation: 10,
+            yoyo: true,
+            repeat: -1,
+            duration: 4,
+            ease: "sine.inOut",
+            stagger: 0.5
+          });
         }
       });
     });
@@ -99,7 +94,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ background: "#050005", minHeight: "100vh", color: S.fg }}>
+    // Background is transparent so the fixed WebGL canvas behind it is visible in the hero!
+    <div style={{ background: "transparent", minHeight: "100vh", color: S.fg }}>
       
       {/* ── WebGL Canvas (Background) ── */}
       {engineReady && <ExperienceEngine />}
@@ -123,15 +119,16 @@ export default function Home() {
       <main style={{ position: "relative", zIndex: 10, overflow: "hidden" }}>
         
         {/* ── HERO SECTION ── */}
-        <section ref={heroRef} style={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 10vw" }}>
+        {/* Transparent background so WebGL Light Tunnel shows through */}
+        <section ref={heroRef} style={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 10vw", background: "transparent" }}>
           <div style={{ paddingBottom: 10 }}>
             <p className="hero-elem" style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff003c", letterSpacing: "0.2em", marginBottom: 20 }}>
-              <ScrambleText text="[ SYSTEM STATUS: ONLINE ]" delay={0} />
+              [ SYSTEM STATUS: ONLINE ]
             </p>
           </div>
           <div style={{ paddingBottom: 20 }}>
-            <h1 className="hero-elem" style={{ fontFamily: S.pixel, fontSize: "clamp(50px, 10vw, 150px)", lineHeight: 1, letterSpacing: "-0.02em" }}>
-              <ScrambleText text="SHOE WORLD" delay={200} duration={1200} />
+            <h1 className="hero-elem rgb-glitch" data-text="SHOE WORLD" style={{ fontFamily: S.pixel, fontSize: "clamp(50px, 10vw, 150px)", lineHeight: 1, letterSpacing: "-0.02em" }}>
+              SHOE WORLD
             </h1>
           </div>
           <div style={{ paddingBottom: 10 }}>
@@ -142,44 +139,34 @@ export default function Home() {
         </section>
 
         {/* ── VIBRANT COLOR PANELS ── */}
-        <div ref={sectionsRef} style={{ padding: "0 5vw", display: "flex", flexDirection: "column", gap: "5vw", paddingBottom: "20vh" }}>
+        {/* Added solid background here so WebGL doesn't show through these cards */}
+        <div ref={sectionsRef} style={{ padding: "0 5vw", display: "flex", flexDirection: "column", gap: "5vw", paddingBottom: "20vh", background: "#050005", paddingTop: "5vw" }}>
 
-          {/* HILLS / GREEN */}
+          {/* BOOTS / RED */}
           <section className="color-panel" style={{ 
-            background: "linear-gradient(145deg, #0f2d18, #05140a)", 
+            background: "linear-gradient(145deg, #3b080b, #120202)", 
             borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden"
           }}>
-            {/* Massive BG Typography */}
             <h2 style={{ position: "absolute", top: "5%", left: "-5%", fontSize: "30vw", fontFamily: S.pixel, color: "rgba(255,255,255,0.02)", lineHeight: 0.8, pointerEvents: "none", whiteSpace: "nowrap" }}>
-              HILLS
+              RUGGED
             </h2>
             
-            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", height: "100%" }}>
+            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", height: "100%", alignItems: "center" }}>
               <div style={{ maxWidth: "40%" }}>
-                <h2 style={{ fontFamily: S.pixel, fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>BUILT FOR<br/>THE HILLS.</h2>
-                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Born in the shadow of the Himalayas, Shoe World curates the finest footwear for every terrain and every moment.</p>
-                <div style={{ marginTop: 40, display: "flex", gap: 40, fontFamily: S.pixel }}>
-                  <div>
-                    <div style={{ fontSize: 24 }}>500+</div>
-                    <div style={{ fontSize: 10, color: "#00ff66" }}>STYLES</div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 24 }}>10+</div>
-                    <div style={{ fontSize: 10, color: "#00ff66" }}>BRANDS</div>
-                  </div>
-                </div>
+                <h2 style={{ fontFamily: S.pixel, fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>BOOTS</h2>
+                <p style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff003c", letterSpacing: "0.2em", marginBottom: 20 }}>MOUNTAIN . TREK . RUGGED</p>
+                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Curated for every journey — from mountain trails to city streets.</p>
               </div>
               
               <div style={{ position: "relative", width: "45%", height: "60vh" }}>
-                <Image src="/shoe-boot.png" alt="Boot" width={600} height={600} className="parallax-img" style={{ position: "absolute", bottom: "-10%", right: "10%", width: "80%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 30px 40px rgba(0,0,0,0.5))" }} />
-                <Image src="/shoe-sandal.png" alt="Sandal" width={400} height={400} className="parallax-img" style={{ position: "absolute", top: "10%", left: "-20%", width: "60%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 20px 30px rgba(0,0,0,0.4))" }} />
+                <Image src="/shoe-boot.png" alt="Boot" width={600} height={600} className="parallax-img" style={{ position: "absolute", top: "0%", right: "10%", width: "90%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 30px 40px rgba(0,0,0,0.5))" }} />
               </div>
             </div>
           </section>
 
-          {/* SPORTS / RED */}
+          {/* SPORTS / YELLOW */}
           <section className="color-panel" style={{ 
-            background: "linear-gradient(145deg, #3b080b, #120202)", 
+            background: "linear-gradient(145deg, #4a4000, #1a1500)", 
             borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden"
           }}>
             <h2 style={{ position: "absolute", top: "20%", right: "-10%", fontSize: "30vw", fontFamily: S.pixel, color: "rgba(255,255,255,0.02)", lineHeight: 0.8, pointerEvents: "none" }}>
@@ -189,9 +176,8 @@ export default function Home() {
             <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "row-reverse", justifyContent: "space-between", height: "100%", alignItems: "center" }}>
               <div style={{ maxWidth: "40%", textAlign: "right" }}>
                 <h2 style={{ fontFamily: S.pixel, fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>SPORTS</h2>
-                <p style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff003c", letterSpacing: "0.2em", marginBottom: 20 }}>RUN . TRAIN . PERFORM</p>
-                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16, marginLeft: "auto" }}>Curated for every journey — from mountain trails to city streets.</p>
-                <button style={{ marginTop: 40, padding: "15px 30px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontFamily: S.pixel, fontSize: 12, cursor: "pointer" }}>SHOP NOW &rarr;</button>
+                <p style={{ fontFamily: S.pixel, fontSize: 12, color: "#ffd700", letterSpacing: "0.2em", marginBottom: 20 }}>RUN . TRAIN . PERFORM</p>
+                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16, marginLeft: "auto" }}>Pushing boundaries with aerodynamic design and explosive energy return.</p>
               </div>
               
               <div style={{ position: "relative", width: "50%", height: "60vh" }}>
@@ -200,24 +186,46 @@ export default function Home() {
             </div>
           </section>
 
-          {/* LOAFERS / BROWN */}
+          {/* SANDALS / ORANGE */}
           <section className="color-panel" style={{ 
-            background: "linear-gradient(145deg, #2a1a0a, #0d0803)", 
+            background: "linear-gradient(145deg, #4a2500, #1a0d00)", 
             borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden"
           }}>
-            <h2 style={{ position: "absolute", bottom: "-10%", left: "5%", fontSize: "20vw", fontFamily: S.pixel, color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>
-              FORMAL
+            <h2 style={{ position: "absolute", top: "5%", left: "-5%", fontSize: "30vw", fontFamily: S.pixel, color: "rgba(255,255,255,0.02)", lineHeight: 0.8, pointerEvents: "none", whiteSpace: "nowrap" }}>
+              FREE
             </h2>
             
             <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", height: "100%", alignItems: "center" }}>
               <div style={{ maxWidth: "40%" }}>
-                <h2 style={{ fontFamily: S.pixel, fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>LOAFERS</h2>
-                <p style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff9900", letterSpacing: "0.2em", marginBottom: 20 }}>FORMAL . ELEGANT . PREMIUM</p>
-                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Step into sophistication. Premium leathers and classic designs for the modern gentleman.</p>
+                <h2 style={{ fontFamily: S.pixel, fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>SANDALS</h2>
+                <p style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff6600", letterSpacing: "0.2em", marginBottom: 20 }}>SUMMER . BREEZE . COMFORT</p>
+                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Lightweight, breathable, and designed for ultimate relaxation.</p>
               </div>
               
               <div style={{ position: "relative", width: "45%", height: "60vh" }}>
-                <Image src="/shoe-loafer.png" alt="Loafer" width={600} height={600} className="parallax-img" style={{ position: "absolute", top: "0%", right: "0%", width: "90%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 30px 50px rgba(0,0,0,0.5))" }} />
+                <Image src="/shoe-sandal.png" alt="Sandal" width={600} height={600} className="parallax-img" style={{ position: "absolute", top: "0%", right: "10%", width: "90%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 30px 40px rgba(0,0,0,0.5))" }} />
+              </div>
+            </div>
+          </section>
+
+          {/* LOAFERS / WINE-BROWN */}
+          <section className="color-panel" style={{ 
+            background: "linear-gradient(145deg, #4a1c1c, #1a0a0a)", 
+            borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden"
+          }}>
+            <h2 style={{ position: "absolute", bottom: "-10%", right: "-5%", fontSize: "20vw", fontFamily: S.pixel, color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>
+              FORMAL
+            </h2>
+            
+            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "row-reverse", justifyContent: "space-between", height: "100%", alignItems: "center" }}>
+              <div style={{ maxWidth: "40%", textAlign: "right" }}>
+                <h2 style={{ fontFamily: S.pixel, fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>LOAFERS</h2>
+                <p style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff9999", letterSpacing: "0.2em", marginBottom: 20 }}>FORMAL . ELEGANT . PREMIUM</p>
+                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16, marginLeft: "auto" }}>Step into sophistication. Premium leathers and classic designs for the modern gentleman.</p>
+              </div>
+              
+              <div style={{ position: "relative", width: "45%", height: "60vh" }}>
+                <Image src="/shoe-loafer.png" alt="Loafer" width={600} height={600} className="parallax-img" style={{ position: "absolute", top: "0%", left: "0%", width: "90%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 30px 50px rgba(0,0,0,0.5))" }} />
               </div>
             </div>
           </section>
