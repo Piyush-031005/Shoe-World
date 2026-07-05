@@ -76,14 +76,15 @@ export default function Home() {
       // 1. Hero Entrance (Resn / Anime.js style aggressive stagger)
       const tl = gsap.timeline();
       tl.from(".hero-elem", {
-        y: 100,
+        y: 150,
         opacity: 0,
         rotationX: -45,
-        skewY: 10,
-        duration: 1.5,
-        stagger: 0.2,
+        skewY: 15,
+        duration: 1.8,
+        stagger: 0.15,
         ease: "power4.out",
-        delay: 0.2, // wait for canvas
+        delay: 0.3, // wait for canvas
+        clearProps: "all" // Clears transform constraints after animation to prevent clipping
       });
 
       // 2. Collection ScrollTrigger (Staggered fade/slide up)
@@ -106,7 +107,7 @@ export default function Home() {
         y: 150,
         opacity: 0,
         scale: 0.9,
-        duration: 1,
+        duration: 1.2,
         stagger: 0.15,
         ease: "back.out(1.5)",
       });
@@ -133,7 +134,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ background: "#050508", minHeight: "100vh", color: S.fg }}>
+    <div style={{ background: "#050005", minHeight: "100vh", color: S.fg }}>
       
       {/* ── WebGL Canvas ── */}
       {engineReady && <ExperienceEngine />}
@@ -143,22 +144,23 @@ export default function Home() {
         
         {/* Hero Section */}
         <section ref={heroRef} style={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 10vw" }}>
-          <div style={{ overflow: "hidden" }}>
-            <p className="hero-elem" style={{ fontFamily: S.pixel, fontSize: 12, color: S.fgDim, letterSpacing: "0.2em", marginBottom: 20 }}>
-              <ScrambleText text="SYSTEM STATUS: ONLINE" delay={200} />
+          <div style={{ paddingBottom: 10 }}>
+            <p className="hero-elem" style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff003c", letterSpacing: "0.2em", marginBottom: 20 }}>
+              <ScrambleText text="[ SYSTEM STATUS: ONLINE ]" delay={200} />
             </p>
           </div>
-          <div style={{ overflow: "hidden" }}>
+          <div style={{ paddingBottom: 20 }}>
             <h1 className="hero-elem rgb-glitch" data-text="SHOE WORLD" style={{ 
               fontFamily: S.pixel, 
               fontSize: "clamp(60px, 12vw, 150px)", 
-              lineHeight: 0.9, 
-              letterSpacing: "-0.02em" 
+              lineHeight: 1, 
+              letterSpacing: "-0.02em",
+              textShadow: "0px 10px 30px rgba(255,0,60,0.2)"
             }}>
               <ScrambleText text="SHOE WORLD" delay={400} duration={1200} />
             </h1>
           </div>
-          <div style={{ overflow: "hidden" }}>
+          <div style={{ paddingBottom: 10 }}>
             <p className="hero-elem" style={{ fontFamily: S.sans, fontSize: 16, color: S.fgDim, maxWidth: 400, marginTop: 40 }}>
               <ScrambleText text="Engineered for the extremes. Designed for the streets. A premium collection of tactical and lifestyle footwear." delay={1000} />
             </p>
@@ -167,11 +169,11 @@ export default function Home() {
 
         {/* Product Grid Section */}
         <section ref={collectionRef} style={{ minHeight: "100vh", padding: "10vw", paddingTop: 0 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 80, overflow: "hidden" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 80 }}>
             <h2 className="collection-title rgb-glitch" data-text="COLLECTION" style={{ fontFamily: S.pixel, fontSize: "clamp(30px, 6vw, 80px)", lineHeight: 1 }}>
               <ScrambleText text="COLLECTION" delay={0} />
             </h2>
-            <p className="collection-title" style={{ fontFamily: S.pixel, fontSize: 12, color: S.fgDim }}>[01 - 04]</p>
+            <p className="collection-title" style={{ fontFamily: S.pixel, fontSize: 12, color: "#00eaff" }}>[01 - 04]</p>
           </div>
 
           <div style={{ 
