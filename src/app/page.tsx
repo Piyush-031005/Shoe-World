@@ -4,33 +4,25 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Lenis from "lenis";
 import { useScramble } from "@/hooks/useScramble";
-import { PRODUCTS } from "@/data/products";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
 
-// Dynamic import to avoid SSR issues with R3F / Three.js
-const ExperienceEngine = dynamic(
-  () => import("@/experience/ExperienceEngine"),
-  { ssr: false }
-);
+// Dynamic import to avoid SSR issues with R3F
+const ExperienceEngine = dynamic(() => import("@/experience/ExperienceEngine"), { ssr: false });
 
 gsap.registerPlugin(ScrollTrigger);
 
 const S = {
-  pixel: "var(--font-pixel), 'Silkscreen', monospace",
-  sans: "var(--font-inter), 'Inter', sans-serif",
+  pixel: "'Silkscreen', monospace",
+  sans: "'Inter', sans-serif",
   fg: "#F0EDE8",
   fgDim: "rgba(240,237,232,0.45)",
-  fgFaint: "rgba(240,237,232,0.15)",
 };
 
-/**
- * TextScramble Component
- */
 function ScrambleText({ text, delay = 0, duration = 800 }: { text: string, delay?: number, duration?: number }) {
   const [isHovered, setIsHovered] = useState(false);
   const scrambled = useScramble(text, delay, isHovered ? 400 : duration);
-  
   return (
     <span 
       onMouseEnter={() => setIsHovered(true)} 
@@ -44,12 +36,13 @@ function ScrambleText({ text, delay = 0, duration = 800 }: { text: string, delay
 
 export default function Home() {
   const [engineReady, setEngineReady] = useState(false);
+  
+  // Refs for animations
   const heroRef = useRef<HTMLElement>(null);
-  const collectionRef = useRef<HTMLElement>(null);
-  const footerRef = useRef<HTMLElement>(null);
+  const sectionsRef = useRef<HTMLDivElement>(null);
 
-  // Initialize Lenis & GSAP Animations
   useEffect(() => {
+    // Lenis Smooth Scroll Setup
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -64,7 +57,6 @@ export default function Home() {
     gsap.ticker.lagSmoothing(0);
 
     function raf(time: number) {
-      // Expose velocity to window for the WebGL fluid shader
       (window as any).__lenisVelocity = lenis.velocity;
       requestAnimationFrame(raf);
     }
@@ -73,56 +65,29 @@ export default function Home() {
 
     // --- GSAP ANIMATIONS ---
     const ctx = gsap.context(() => {
-      // 1. Hero Entrance (Resn / Anime.js style aggressive stagger)
-      const tl = gsap.timeline();
-      tl.from(".hero-elem", {
-        y: 150,
-        opacity: 0,
-        rotationX: -45,
-        skewY: 15,
-        duration: 1.8,
-        stagger: 0.15,
-        ease: "power4.out",
-        delay: 0.3, // wait for canvas
-        clearProps: "all" // Clears transform constraints after animation to prevent clipping
+      // 1. Hero Stagger
+      gsap.from(".hero-elem", {
+        y: 100, opacity: 0, rotationX: -30, skewY: 10,
+        duration: 1.5, stagger: 0.1, ease: "power4.out", delay: 0.1, clearProps: "all"
       });
 
-      // 2. Collection ScrollTrigger (Staggered fade/slide up)
-      gsap.from(".collection-title", {
-        scrollTrigger: {
-          trigger: collectionRef.current,
-          start: "top 80%",
-        },
-        x: -100,
-        opacity: 0,
-        duration: 1.2,
-        ease: "expo.out",
-      });
-
-      gsap.from(".product-card", {
-        scrollTrigger: {
-          trigger: collectionRef.current,
-          start: "top 60%",
-        },
-        y: 150,
-        opacity: 0,
-        scale: 0.9,
-        duration: 1.2,
-        stagger: 0.15,
-        ease: "back.out(1.5)",
-      });
-
-      // 3. Footer Reveal
-      gsap.from(".footer-elem", {
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: "top 95%",
-        },
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.2,
-        ease: "power3.out",
+      // 2. Parallax and Reveal for Colorful Sections
+      const panels = gsap.utils.toArray(".color-panel");
+      panels.forEach((panel: any) => {
+        gsap.from(panel, {
+          scrollTrigger: { trigger: panel, start: "top 85%" },
+          y: 100, opacity: 0, scale: 0.95, duration: 1.2, ease: "expo.out", clearProps: "all"
+        });
+        
+        // Image Parallax within panels
+        const imgs = panel.querySelectorAll(".parallax-img");
+        if (imgs.length > 0) {
+          gsap.to(imgs, {
+            scrollTrigger: { trigger: panel, start: "top bottom", end: "bottom top", scrub: 1 },
+            y: (i: number) => -100 * (i + 1), // Different speed for each image
+            ease: "none"
+          });
+        }
       });
     });
 
@@ -136,139 +101,128 @@ export default function Home() {
   return (
     <div style={{ background: "#050005", minHeight: "100vh", color: S.fg }}>
       
-      {/* ── WebGL Canvas ── */}
+      {/* ── WebGL Canvas (Background) ── */}
       {engineReady && <ExperienceEngine />}
 
-      {/* ── Foreground DOM Layer ── */}
-      <main style={{ position: "relative", zIndex: 10, perspective: "1000px" }}>
-        
-        {/* ── UTOPIA TOKYO HUD OVERLAY ── */}
-        <div style={{
-          position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
-          pointerEvents: "none", zIndex: 50,
-          backgroundSize: "50px 50px",
-          backgroundImage: "linear-gradient(rgba(255,0,60,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,60,0.05) 1px, transparent 1px)"
-        }}>
-          {/* Borders */}
-          <div style={{ position: "absolute", top: "5%", left: "5%", width: "90%", height: "90%", border: "1px solid rgba(255,0,60,0.2)" }} />
-          
-          {/* Crosshairs */}
-          <div style={{ position: "absolute", top: "5%", left: "5%", transform: "translate(-50%, -50%)", color: "#ff003c", fontFamily: S.pixel, fontSize: 16 }}>+</div>
-          <div style={{ position: "absolute", top: "5%", right: "5%", transform: "translate(50%, -50%)", color: "#ff003c", fontFamily: S.pixel, fontSize: 16 }}>+</div>
-          <div style={{ position: "absolute", bottom: "5%", left: "5%", transform: "translate(-50%, 50%)", color: "#ff003c", fontFamily: S.pixel, fontSize: 16 }}>+</div>
-          <div style={{ position: "absolute", bottom: "5%", right: "5%", transform: "translate(50%, 50%)", color: "#ff003c", fontFamily: S.pixel, fontSize: 16 }}>+</div>
-          
-          {/* Data Readouts */}
-          <div style={{ position: "absolute", top: "2%", left: "5%", color: "#ff003c", fontFamily: S.pixel, fontSize: 10, opacity: 0.8 }}>
-            &gt;_EXECUTE_CREATION
-          </div>
-          <div style={{ position: "absolute", top: "50%", right: "2%", transform: "translateY(-50%) rotate(90deg)", transformOrigin: "right center", color: "#00eaff", fontFamily: S.pixel, fontSize: 10, opacity: 0.8 }}>
-            DATA_INTELLECT // V-2.0.0
-          </div>
-          <div style={{ position: "absolute", bottom: "2%", right: "5%", color: "#ff003c", fontFamily: S.pixel, fontSize: 10, opacity: 0.8 }}>
-            SYSTEM: ONLINE // 99.9%
-          </div>
-        </div>
+      {/* ── Glassmorphism Navbar ── */}
+      <nav style={{
+        position: "fixed", bottom: "5%", left: "50%", transform: "translateX(-50%)", zIndex: 100,
+        background: "rgba(10,10,15,0.6)", backdropFilter: "blur(20px)",
+        border: "1px solid rgba(255,255,255,0.1)", borderRadius: 50,
+        padding: "10px 20px", display: "flex", gap: 30, alignItems: "center",
+        fontFamily: S.pixel, fontSize: 10, letterSpacing: "0.1em"
+      }}>
+        <div style={{ background: "#ff003c", width: 30, height: 30, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>SW</div>
+        <a href="#" style={{ color: S.fg, textDecoration: "none" }}>HOME</a>
+        <a href="#" style={{ color: S.fgDim, textDecoration: "none" }}>COLLECTION</a>
+        <a href="#" style={{ color: S.fgDim, textDecoration: "none" }}>ABOUT</a>
+        <a href="#" style={{ color: S.fgDim, textDecoration: "none" }}>CONTACT</a>
+        <button style={{ background: S.fg, color: "#000", border: "none", padding: "10px 20px", borderRadius: 30, fontFamily: S.pixel, cursor: "pointer" }}>VISIT STORE +</button>
+      </nav>
 
-        {/* Hero Section */}
+      <main style={{ position: "relative", zIndex: 10, overflow: "hidden" }}>
+        
+        {/* ── HERO SECTION ── */}
         <section ref={heroRef} style={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 10vw" }}>
           <div style={{ paddingBottom: 10 }}>
             <p className="hero-elem" style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff003c", letterSpacing: "0.2em", marginBottom: 20 }}>
-              <ScrambleText text="[ SYSTEM STATUS: ONLINE ]" delay={200} />
+              <ScrambleText text="[ SYSTEM STATUS: ONLINE ]" delay={0} />
             </p>
           </div>
           <div style={{ paddingBottom: 20 }}>
-            <h1 className="hero-elem rgb-glitch" data-text="SHOE WORLD" style={{ 
-              fontFamily: S.pixel, 
-              fontSize: "clamp(60px, 12vw, 150px)", 
-              lineHeight: 1, 
-              letterSpacing: "-0.02em",
-              textShadow: "0px 10px 30px rgba(255,0,60,0.2)"
-            }}>
-              <ScrambleText text="SHOE WORLD" delay={400} duration={1200} />
+            <h1 className="hero-elem" style={{ fontFamily: S.pixel, fontSize: "clamp(50px, 10vw, 150px)", lineHeight: 1, letterSpacing: "-0.02em" }}>
+              <ScrambleText text="SHOE WORLD" delay={200} duration={1200} />
             </h1>
           </div>
           <div style={{ paddingBottom: 10 }}>
             <p className="hero-elem" style={{ fontFamily: S.sans, fontSize: 16, color: S.fgDim, maxWidth: 400, marginTop: 40 }}>
-              <ScrambleText text="Engineered for the extremes. Designed for the streets. A premium collection of tactical and lifestyle footwear." delay={1000} />
+              Engineered for the extremes. Designed for the streets. A premium collection of tactical and lifestyle footwear.
             </p>
           </div>
         </section>
 
-        {/* Product Grid Section */}
-        <section ref={collectionRef} style={{ minHeight: "100vh", padding: "10vw", paddingTop: 0 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 80 }}>
-            <h2 className="collection-title rgb-glitch" data-text="COLLECTION" style={{ fontFamily: S.pixel, fontSize: "clamp(30px, 6vw, 80px)", lineHeight: 1 }}>
-              <ScrambleText text="COLLECTION" delay={0} />
-            </h2>
-            <p className="collection-title" style={{ fontFamily: S.pixel, fontSize: 12, color: "#00eaff" }}>[01 - 04]</p>
-          </div>
+        {/* ── VIBRANT COLOR PANELS ── */}
+        <div ref={sectionsRef} style={{ padding: "0 5vw", display: "flex", flexDirection: "column", gap: "5vw", paddingBottom: "20vh" }}>
 
-          <div style={{ 
-            display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
-            gap: "4vw",
+          {/* HILLS / GREEN */}
+          <section className="color-panel" style={{ 
+            background: "linear-gradient(145deg, #0f2d18, #05140a)", 
+            borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden"
           }}>
-            {PRODUCTS.slice(0, 4).map((product, index) => (
-              <div key={product.id} className="product-card group" style={{ display: "flex", flexDirection: "column", gap: 20, cursor: "pointer" }}>
-                <div style={{ 
-                  aspectRatio: "4/5", 
-                  position: "relative", 
-                  background: "rgba(20,20,25,0.4)", 
-                  backdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255,255,255,0.05)",
-                  borderRadius: 4,
-                  overflow: "hidden",
-                  transition: "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-10px) scale(1.02)";
-                  e.currentTarget.style.boxShadow = "0 20px 40px rgba(255,0,60,0.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0px) scale(1)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-                >
-                  <div style={{
-                    position: "absolute", inset: 0, 
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontFamily: S.pixel, color: S.fgDim, fontSize: 12,
-                    zIndex: 2
-                  }}>
-                    [IMG_MISSING]
+            {/* Massive BG Typography */}
+            <h2 style={{ position: "absolute", top: "5%", left: "-5%", fontSize: "30vw", fontFamily: S.pixel, color: "rgba(255,255,255,0.02)", lineHeight: 0.8, pointerEvents: "none", whiteSpace: "nowrap" }}>
+              HILLS
+            </h2>
+            
+            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", height: "100%" }}>
+              <div style={{ maxWidth: "40%" }}>
+                <h2 style={{ fontFamily: S.pixel, fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>BUILT FOR<br/>THE HILLS.</h2>
+                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Born in the shadow of the Himalayas, Shoe World curates the finest footwear for every terrain and every moment.</p>
+                <div style={{ marginTop: 40, display: "flex", gap: 40, fontFamily: S.pixel }}>
+                  <div>
+                    <div style={{ fontSize: 24 }}>500+</div>
+                    <div style={{ fontSize: 10, color: "#00ff66" }}>STYLES</div>
                   </div>
-                  {/* Subtle red tint overlay on hover */}
-                  <div style={{
-                    position: "absolute", inset: 0,
-                    background: "linear-gradient(to bottom, transparent, rgba(255,0,60,0.2))",
-                    opacity: 0,
-                    transition: "opacity 0.4s",
-                  }} 
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = "0"}
-                  />
-                </div>
-                <div>
-                  <h3 className="rgb-glitch" data-text={product.name} style={{ fontFamily: S.pixel, fontSize: 20, marginBottom: 8 }}>
-                    {product.name}
-                  </h3>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontFamily: S.sans, fontSize: 14, color: S.fgDim }}>
-                    <span>{product.type}</span>
-                    <span>{product.price}</span>
+                  <div>
+                    <div style={{ fontSize: 24 }}>10+</div>
+                    <div style={{ fontSize: 10, color: "#00ff66" }}>BRANDS</div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+              
+              <div style={{ position: "relative", width: "45%", height: "60vh" }}>
+                <Image src="/shoe-boot.png" alt="Boot" width={600} height={600} className="parallax-img" style={{ position: "absolute", bottom: "-10%", right: "10%", width: "80%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 30px 40px rgba(0,0,0,0.5))" }} />
+                <Image src="/shoe-sandal.png" alt="Sandal" width={400} height={400} className="parallax-img" style={{ position: "absolute", top: "10%", left: "-20%", width: "60%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 20px 30px rgba(0,0,0,0.4))" }} />
+              </div>
+            </div>
+          </section>
 
-        {/* Footer */}
-        <footer ref={footerRef} style={{ padding: "10vw", display: "flex", justifyContent: "space-between", borderTop: "1px solid rgba(255,255,255,0.05)", overflow: "hidden" }}>
-          <p className="footer-elem" style={{ fontFamily: S.pixel, fontSize: 10, color: S.fgDim }}>© 2026 SHOE WORLD</p>
-          <p className="footer-elem" style={{ fontFamily: S.pixel, fontSize: 10, color: S.fgDim }}>PITHORAGARH, UTTARAKHAND</p>
-        </footer>
+          {/* SPORTS / RED */}
+          <section className="color-panel" style={{ 
+            background: "linear-gradient(145deg, #3b080b, #120202)", 
+            borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden"
+          }}>
+            <h2 style={{ position: "absolute", top: "20%", right: "-10%", fontSize: "30vw", fontFamily: S.pixel, color: "rgba(255,255,255,0.02)", lineHeight: 0.8, pointerEvents: "none" }}>
+              RUN
+            </h2>
+            
+            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "row-reverse", justifyContent: "space-between", height: "100%", alignItems: "center" }}>
+              <div style={{ maxWidth: "40%", textAlign: "right" }}>
+                <h2 style={{ fontFamily: S.pixel, fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>SPORTS</h2>
+                <p style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff003c", letterSpacing: "0.2em", marginBottom: 20 }}>RUN . TRAIN . PERFORM</p>
+                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16, marginLeft: "auto" }}>Curated for every journey — from mountain trails to city streets.</p>
+                <button style={{ marginTop: 40, padding: "15px 30px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontFamily: S.pixel, fontSize: 12, cursor: "pointer" }}>SHOP NOW &rarr;</button>
+              </div>
+              
+              <div style={{ position: "relative", width: "50%", height: "60vh" }}>
+                <Image src="/shoe-hero.png" alt="Sports Shoe" width={800} height={800} className="parallax-img" style={{ position: "absolute", top: "10%", left: "-10%", width: "100%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 40px 60px rgba(0,0,0,0.6))" }} />
+              </div>
+            </div>
+          </section>
 
+          {/* LOAFERS / BROWN */}
+          <section className="color-panel" style={{ 
+            background: "linear-gradient(145deg, #2a1a0a, #0d0803)", 
+            borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden"
+          }}>
+            <h2 style={{ position: "absolute", bottom: "-10%", left: "5%", fontSize: "20vw", fontFamily: S.pixel, color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>
+              FORMAL
+            </h2>
+            
+            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", height: "100%", alignItems: "center" }}>
+              <div style={{ maxWidth: "40%" }}>
+                <h2 style={{ fontFamily: S.pixel, fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>LOAFERS</h2>
+                <p style={{ fontFamily: S.pixel, fontSize: 12, color: "#ff9900", letterSpacing: "0.2em", marginBottom: 20 }}>FORMAL . ELEGANT . PREMIUM</p>
+                <p style={{ fontFamily: S.sans, color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Step into sophistication. Premium leathers and classic designs for the modern gentleman.</p>
+              </div>
+              
+              <div style={{ position: "relative", width: "45%", height: "60vh" }}>
+                <Image src="/shoe-loafer.png" alt="Loafer" width={600} height={600} className="parallax-img" style={{ position: "absolute", top: "0%", right: "0%", width: "90%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 30px 50px rgba(0,0,0,0.5))" }} />
+              </div>
+            </div>
+          </section>
+
+        </div>
       </main>
     </div>
   );
