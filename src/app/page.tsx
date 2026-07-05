@@ -17,8 +17,8 @@ const ExperienceEngine = dynamic(
 gsap.registerPlugin(ScrollTrigger);
 
 const S = {
-  pixel: '"Silkscreen", monospace',
-  sans: '"Inter", sans-serif',
+  pixel: "var(--font-pixel), 'Silkscreen', monospace",
+  sans: "var(--font-inter), 'Inter', sans-serif",
   fg: "#F0EDE8",
   fgDim: "rgba(240,237,232,0.45)",
   fgFaint: "rgba(240,237,232,0.15)",
@@ -142,6 +142,34 @@ export default function Home() {
       {/* ── Foreground DOM Layer ── */}
       <main style={{ position: "relative", zIndex: 10, perspective: "1000px" }}>
         
+        {/* ── UTOPIA TOKYO HUD OVERLAY ── */}
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+          pointerEvents: "none", zIndex: 50,
+          backgroundSize: "50px 50px",
+          backgroundImage: "linear-gradient(rgba(255,0,60,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,60,0.05) 1px, transparent 1px)"
+        }}>
+          {/* Borders */}
+          <div style={{ position: "absolute", top: "5%", left: "5%", width: "90%", height: "90%", border: "1px solid rgba(255,0,60,0.2)" }} />
+          
+          {/* Crosshairs */}
+          <div style={{ position: "absolute", top: "5%", left: "5%", transform: "translate(-50%, -50%)", color: "#ff003c", fontFamily: S.pixel, fontSize: 16 }}>+</div>
+          <div style={{ position: "absolute", top: "5%", right: "5%", transform: "translate(50%, -50%)", color: "#ff003c", fontFamily: S.pixel, fontSize: 16 }}>+</div>
+          <div style={{ position: "absolute", bottom: "5%", left: "5%", transform: "translate(-50%, 50%)", color: "#ff003c", fontFamily: S.pixel, fontSize: 16 }}>+</div>
+          <div style={{ position: "absolute", bottom: "5%", right: "5%", transform: "translate(50%, 50%)", color: "#ff003c", fontFamily: S.pixel, fontSize: 16 }}>+</div>
+          
+          {/* Data Readouts */}
+          <div style={{ position: "absolute", top: "2%", left: "5%", color: "#ff003c", fontFamily: S.pixel, fontSize: 10, opacity: 0.8 }}>
+            &gt;_EXECUTE_CREATION
+          </div>
+          <div style={{ position: "absolute", top: "50%", right: "2%", transform: "translateY(-50%) rotate(90deg)", transformOrigin: "right center", color: "#00eaff", fontFamily: S.pixel, fontSize: 10, opacity: 0.8 }}>
+            DATA_INTELLECT // V-2.0.0
+          </div>
+          <div style={{ position: "absolute", bottom: "2%", right: "5%", color: "#ff003c", fontFamily: S.pixel, fontSize: 10, opacity: 0.8 }}>
+            SYSTEM: ONLINE // 99.9%
+          </div>
+        </div>
+
         {/* Hero Section */}
         <section ref={heroRef} style={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 10vw" }}>
           <div style={{ paddingBottom: 10 }}>

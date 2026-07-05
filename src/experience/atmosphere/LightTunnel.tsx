@@ -54,20 +54,26 @@ export default function LightTunnel() {
   useFrame((state, delta) => {
     if (!meshRef.current) return;
     
-    // Controlled by FilmController
-    const timeScale = (window as any).__envSpeed !== undefined ? (window as any).__envSpeed : 1.0;
+    // Read velocity from Lenis scroll (set in page.tsx)
+    const baseSpeed = 1.0;
+    const scrollVelocity = (window as any).__lenisVelocity || 0;
+    // Map scroll velocity (which can be from -100 to 100) to a positive speed multiplier
+    const speedMultiplier = baseSpeed + Math.abs(scrollVelocity) * 0.5;
 
     lines.forEach((line, i) => {
       // Fly towards camera
-      line.z += line.speed * 40 * delta * timeScale;
+      const direction = scrollVelocity >= 0 ? 1 : -1; 
+      line.z += line.speed * 40 * delta * (baseSpeed + (scrollVelocity * 0.2));
       
       if (line.z > 20) {
         line.z = -150; // Reset far back
+      } else if (line.z < -150) {
+        line.z = 20;
       }
 
       dummy.position.set(line.x, line.y, line.z);
       // Stretch them massively based on speed to look like light trails
-      dummy.scale.set(0.02, 0.02, line.scale * timeScale * 10);
+      dummy.scale.set(0.02, 0.02, line.scale * speedMultiplier * 5);
       dummy.updateMatrix();
       meshRef.current!.setMatrixAt(i, dummy.matrix);
     });

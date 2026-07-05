@@ -6,6 +6,7 @@ import { EffectComposer, Noise } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 
 import FluidShaderBackground from "./atmosphere/FluidShaderBackground";
+import LightTunnel from "./atmosphere/LightTunnel";
 
 /**
  * Global Scene Registrar
@@ -31,6 +32,7 @@ export default function ExperienceEngine() {
   return (
     <Canvas
       dpr={[1, 1.5]}
+      camera={{ position: [0, 0, 0], fov: 75 }}
       gl={{
         antialias: false,
         alpha: false,
@@ -45,7 +47,7 @@ export default function ExperienceEngine() {
         width: "100vw",
         height: "100vh",
         zIndex: -1, // Sits behind the DOM
-        background: "#050508",
+        background: "#050005",
       }}
     >
       <SceneRegistrar />
@@ -53,6 +55,9 @@ export default function ExperienceEngine() {
       <Suspense fallback={null}>
         {/* Abstract Fluid Shader */}
         <FluidShaderBackground />
+        
+        {/* Massive AC Motorsport Light Tunnel */}
+        <LightTunnel />
         
         <EffectComposer disableNormalPass>
           <Noise opacity={0.03} blendFunction={BlendFunction.OVERLAY} />
