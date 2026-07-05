@@ -131,9 +131,9 @@ export default function FluidShaderBackground() {
       uTime: { value: 0 },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
       uScrollVelocity: { value: 0 },
-      uColor1: { value: new THREE.Color("#050508") }, // Very dark base
-      uColor2: { value: new THREE.Color("#0a0a0f") },
-      uColor3: { value: new THREE.Color("#111116") }, // Subtle lighter spots
+      uColor1: { value: new THREE.Color("#050005") }, // Dark void
+      uColor2: { value: new THREE.Color("#ff003c") }, // AC Motorsport Red
+      uColor3: { value: new THREE.Color("#00eaff") }, // Cyan/Blue Glitch
     }),
     []
   );
