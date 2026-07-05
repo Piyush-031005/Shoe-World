@@ -51,8 +51,8 @@ function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness
 }) {
   return (
     <div style={{ width: "100%", height, cursor: "grab" }}>
-      {/* Camera z=4: shoe appears ~1.75x bigger; scale slightly reduced to stay within frustum */}
-      <Canvas camera={{ position: [0, 0.2, 4], fov: 45 }} gl={{ alpha: true }}>
+      {/* Camera z=5.4: shoe appears 1.3x bigger than original z=7 */}
+      <Canvas camera={{ position: [0, 0.1, 5.4], fov: 45 }} gl={{ alpha: true }}>
         <ambientLight intensity={2.5} />
         <spotLight position={[8, 12, 8]} angle={0.4} penumbra={1} intensity={5} castShadow />
         <spotLight position={[-6, -4, 6]} angle={0.4} penumbra={1} intensity={3} color={emissiveColor || "#ffffff"} />
