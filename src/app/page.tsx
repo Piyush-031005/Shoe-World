@@ -260,195 +260,304 @@ export default function Home() {
           <div className="hero-elem" style={{ width: 40, height: 2, background: "#0066ff", marginTop: 36, position: "relative", zIndex: 15 }} />
         </section>
 
-        {/* COLOR PANELS */}
-        <div style={{ padding: "0 5vw", display: "flex", flexDirection: "column", gap: "5vw", paddingBottom: "20vh", paddingTop: "5vw", background: "#050005" }}>
+        {/* COLOR PANELS — compact cards with bigger models */}
+        <div style={{ padding: "0 5vw", display: "flex", flexDirection: "column", gap: "3vw", paddingBottom: "15vh", paddingTop: "5vw", background: "#050005" }}>
 
           {/* BOOTS */}
-          <section className="color-panel panel-boots" style={{ borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden" }}>
-            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", left: "-3%", fontSize: "25vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none", whiteSpace: "nowrap" }}>RUGGED</h2>
-            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "60vh" }}>
-              <div style={{ maxWidth: "40%" }}>
-                <h2 className="font-pixel" style={{ fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>BOOTS</h2>
-                <p className="font-pixel" style={{ fontSize: 12, color: "#ff003c", letterSpacing: "0.2em", marginBottom: 20 }}>MOUNTAIN · TREK · RUGGED</p>
-                <p className="font-sans" style={{ color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Conquer every trail from the Himalayas to the city streets with rugged, premium craftsmanship.</p>
-                <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
+          <section className="color-panel panel-boots" style={{ borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden" }}>
+            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", left: "-3%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none", whiteSpace: "nowrap" }}>RUGGED</h2>
+            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
+              <div style={{ maxWidth: "38%" }}>
+                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1, marginBottom: 16 }}>BOOTS</h2>
+                <p className="font-pixel" style={{ fontSize: 11, color: "#ff003c", letterSpacing: "0.2em", marginBottom: 14 }}>MOUNTAIN · TREK · RUGGED</p>
+                <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Conquer every trail from the Himalayas to the city streets with rugged, premium craftsmanship.</p>
+                <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "48%" }}>
+              <div style={{ width: "50%" }}>
                 <ShoeViewer
                   path="/models/boots.glb"
-                  height={540}
+                  height={420}
                   primaryColor="#1c0808"
                   emissiveColor="#8b0000"
                   roughness={0.5} metalness={0.35}
                   modelPosition={[0, 0, 0]}
                   modelRotation={[0.1, -0.4, 0]}
-                  modelScale={1.8}
+                  modelScale={2.2}
                 />
               </div>
             </div>
           </section>
 
-          {/* SPORTS — transparent PNG (no 3D model) */}
-          <section className="color-panel panel-sports" style={{ borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden" }}>
-            <h2 className="font-pixel" style={{ position: "absolute", top: "15%", right: "-8%", fontSize: "25vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>RUN</h2>
-            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "row-reverse", justifyContent: "space-between", alignItems: "center", minHeight: "60vh" }}>
-              <div style={{ maxWidth: "40%", textAlign: "right" }}>
-                <h2 className="font-pixel" style={{ fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>SPORTS</h2>
-                <p className="font-pixel" style={{ fontSize: 12, color: "#ffd700", letterSpacing: "0.2em", marginBottom: 20 }}>RUN · TRAIN · PERFORM</p>
-                <p className="font-sans" style={{ color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Pushing boundaries with aerodynamic design and explosive energy return.</p>
-                <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
+          {/* SPORTS */}
+          <section className="color-panel panel-sports" style={{ borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden" }}>
+            <h2 className="font-pixel" style={{ position: "absolute", top: "10%", right: "-6%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>RUN</h2>
+            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "row-reverse", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
+              <div style={{ maxWidth: "38%", textAlign: "right" }}>
+                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1, marginBottom: 16 }}>SPORTS</h2>
+                <p className="font-pixel" style={{ fontSize: 11, color: "#ffd700", letterSpacing: "0.2em", marginBottom: 14 }}>RUN · TRAIN · PERFORM</p>
+                <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Pushing boundaries with aerodynamic design and explosive energy return.</p>
+                <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Image
-                  src="/shoe-sports-orange.png" alt="Sports Shoe" width={600} height={480}
-                  style={{ width: "90%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 40px rgba(255,130,0,0.45))" }}
-                />
+                <Image src="/shoe-sports-orange.png" alt="Sports Shoe" width={600} height={480}
+                  style={{ width: "88%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 40px rgba(255,130,0,0.45))" }} />
               </div>
             </div>
           </section>
 
           {/* SANDALS */}
-          <section className="color-panel panel-sandals-green" style={{ borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden" }}>
-            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", left: "-3%", fontSize: "25vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none", whiteSpace: "nowrap" }}>FREE</h2>
-            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "60vh" }}>
-              <div style={{ maxWidth: "40%" }}>
-                <h2 className="font-pixel" style={{ fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>SANDALS</h2>
-                <p className="font-pixel" style={{ fontSize: 12, color: "#00cc55", letterSpacing: "0.2em", marginBottom: 20 }}>SUMMER · BREEZE · COMFORT</p>
-                <p className="font-sans" style={{ color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Lightweight, breathable, designed for relaxation on Himalayan trails.</p>
-                <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
+          <section className="color-panel panel-sandals-green" style={{ borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden" }}>
+            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", left: "-3%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none", whiteSpace: "nowrap" }}>FREE</h2>
+            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
+              <div style={{ maxWidth: "38%" }}>
+                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1, marginBottom: 16 }}>SANDALS</h2>
+                <p className="font-pixel" style={{ fontSize: 11, color: "#00cc55", letterSpacing: "0.2em", marginBottom: 14 }}>SUMMER · BREEZE · COMFORT</p>
+                <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Lightweight, breathable, designed for relaxation on Himalayan trails.</p>
+                <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "48%" }}>
+              <div style={{ width: "50%" }}>
                 <ShoeViewer
                   path="/models/sandles.glb"
-                  height={540}
+                  height={420}
                   primaryColor="#0a3d20"
                   emissiveColor="#c8a415"
                   roughness={0.55} metalness={0.4}
                   modelPosition={[0, 0, 0]}
                   modelRotation={[0.1, -0.4, 0]}
-                  modelScale={1.6}
+                  modelScale={2.0}
                 />
               </div>
             </div>
           </section>
 
           {/* LOAFERS */}
-          <section className="color-panel panel-loafers" style={{ borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden" }}>
+          <section className="color-panel panel-loafers" style={{ borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden" }}>
             <h2 className="font-pixel" style={{ position: "absolute", bottom: "-5%", right: "-5%", fontSize: "20vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>FORMAL</h2>
-            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "row-reverse", justifyContent: "space-between", alignItems: "center", minHeight: "60vh" }}>
-              <div style={{ maxWidth: "40%", textAlign: "right" }}>
-                <h2 className="font-pixel" style={{ fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>LOAFERS</h2>
-                <p className="font-pixel" style={{ fontSize: 12, color: "#ff9999", letterSpacing: "0.2em", marginBottom: 20 }}>FORMAL · ELEGANT · PREMIUM</p>
-                <p className="font-sans" style={{ color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Step into sophistication. Premium leathers and classic designs for the modern gentleman.</p>
-                <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
+            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "row-reverse", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
+              <div style={{ maxWidth: "38%", textAlign: "right" }}>
+                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1, marginBottom: 16 }}>LOAFERS</h2>
+                <p className="font-pixel" style={{ fontSize: 11, color: "#ff9999", letterSpacing: "0.2em", marginBottom: 14 }}>FORMAL · ELEGANT · PREMIUM</p>
+                <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Step into sophistication. Premium leathers and classic designs for the modern gentleman.</p>
+                <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "48%" }}>
+              <div style={{ width: "50%" }}>
                 <ShoeViewer
                   path="/models/loafer.glb"
-                  height={540}
+                  height={420}
                   primaryColor="#4a2810"
                   emissiveColor="#c8860a"
                   roughness={0.85} metalness={0.15}
                   modelPosition={[0, 0, 0]}
                   modelRotation={[0.1, -0.4, 0]}
-                  modelScale={1.8}
+                  modelScale={2.2}
                 />
               </div>
             </div>
           </section>
 
-          {/* SNEAKERS — Jordan 1 style */}
+          {/* SNEAKERS */}
           <section className="color-panel" style={{
-            borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden",
+            borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden",
             background: "linear-gradient(145deg, #0d0d1a 0%, #0a0820 40%, #050510 100%)",
           }}>
-            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", right: "-5%", fontSize: "25vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>AIR</h2>
-            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "60vh" }}>
-              <div style={{ maxWidth: "40%" }}>
-                <h2 className="font-pixel" style={{ fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>SNEAKERS</h2>
-                <p className="font-pixel" style={{ fontSize: 12, color: "#ff3c3c", letterSpacing: "0.2em", marginBottom: 20 }}>STREET · CULTURE · ICONIC</p>
-                <p className="font-sans" style={{ color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Step into streetwear culture. Iconic silhouettes for the bold and the fearless.</p>
-                <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
+            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", right: "-5%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>AIR</h2>
+            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
+              <div style={{ maxWidth: "38%" }}>
+                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1, marginBottom: 16 }}>SNEAKERS</h2>
+                <p className="font-pixel" style={{ fontSize: 11, color: "#ff3c3c", letterSpacing: "0.2em", marginBottom: 14 }}>STREET · CULTURE · ICONIC</p>
+                <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Step into streetwear culture. Iconic silhouettes for the bold and the fearless.</p>
+                <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "48%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Image src="/shoe-sneaker.png" alt="Sneakers" width={600} height={520}
-                  style={{ width: "85%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 50px rgba(255,40,40,0.4)) drop-shadow(0 0 20px rgba(0,60,200,0.3))" }} />
+                  style={{ width: "88%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 50px rgba(255,40,40,0.4)) drop-shadow(0 0 20px rgba(0,60,200,0.3))" }} />
               </div>
             </div>
           </section>
 
-          {/* CASUAL — Red Chief style tan leather */}
+          {/* CASUAL */}
           <section className="color-panel" style={{
-            borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden",
+            borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden",
             background: "linear-gradient(145deg, #1a1000 0%, #120c00 40%, #0a0800 100%)",
           }}>
-            <h2 className="font-pixel" style={{ position: "absolute", top: "15%", left: "-5%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>EASY</h2>
-            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "row-reverse", justifyContent: "space-between", alignItems: "center", minHeight: "60vh" }}>
-              <div style={{ maxWidth: "40%", textAlign: "right" }}>
-                <h2 className="font-pixel" style={{ fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>CASUAL</h2>
-                <p className="font-pixel" style={{ fontSize: 12, color: "#c8860a", letterSpacing: "0.2em", marginBottom: 20 }}>DAILY · COMFORT · CLASSIC</p>
-                <p className="font-sans" style={{ color: "rgba(255,255,255,0.6)", fontSize: 16 }}>All-day comfort meets timeless style. Premium nubuck leather crafted for every occasion.</p>
-                <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
+            <h2 className="font-pixel" style={{ position: "absolute", top: "10%", left: "-5%", fontSize: "20vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>EASY</h2>
+            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "row-reverse", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
+              <div style={{ maxWidth: "38%", textAlign: "right" }}>
+                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1, marginBottom: 16 }}>CASUAL</h2>
+                <p className="font-pixel" style={{ fontSize: 11, color: "#c8860a", letterSpacing: "0.2em", marginBottom: 14 }}>DAILY · COMFORT · CLASSIC</p>
+                <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>All-day comfort meets timeless style. Premium nubuck leather crafted for every occasion.</p>
+                <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "48%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Image src="/shoe-casual.png" alt="Casual Shoes" width={600} height={480}
-                  style={{ width: "85%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 40px rgba(200,130,10,0.4))" }} />
+                  style={{ width: "88%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 40px rgba(200,130,10,0.4))" }} />
               </div>
             </div>
           </section>
 
-          {/* CROCS — Olive green */}
+          {/* CROCS */}
           <section className="color-panel" style={{
-            borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden",
+            borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden",
             background: "linear-gradient(145deg, #0f1a0a 0%, #0a1205 40%, #050a02 100%)",
           }}>
-            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", right: "-5%", fontSize: "25vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>CLOG</h2>
-            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "60vh" }}>
-              <div style={{ maxWidth: "40%" }}>
-                <h2 className="font-pixel" style={{ fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>CROCS</h2>
-                <p className="font-pixel" style={{ fontSize: 12, color: "#7ab648", letterSpacing: "0.2em", marginBottom: 20 }}>LIGHT · FREE · ANYWHERE</p>
-                <p className="font-sans" style={{ color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Ultra-lightweight, waterproof, and built for adventure — from Himalayan streams to city streets.</p>
-                <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
+            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", right: "-5%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>CLOG</h2>
+            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
+              <div style={{ maxWidth: "38%" }}>
+                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1, marginBottom: 16 }}>CROCS</h2>
+                <p className="font-pixel" style={{ fontSize: 11, color: "#7ab648", letterSpacing: "0.2em", marginBottom: 14 }}>LIGHT · FREE · ANYWHERE</p>
+                <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Ultra-lightweight, waterproof, and built for adventure — from Himalayan streams to city streets.</p>
+                <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "48%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Image src="/shoe-crocs.png" alt="Crocs" width={600} height={440}
-                  style={{ width: "85%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 40px rgba(120,180,70,0.4))" }} />
+                  style={{ width: "88%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 40px rgba(120,180,70,0.4))" }} />
+              </div>
+            </div>
+          </section>
+
+          {/* ── BUILT FOR THE HILLS — Uttarakhand Identity ── */}
+          <section className="color-panel panel-hills" style={{
+            borderRadius: 32, padding: "5vw 6vw", minHeight: "70vh",
+            position: "relative", overflow: "hidden",
+            background: "linear-gradient(180deg, #051a0d 0%, #041510 40%, #020d08 100%)",
+          }}>
+            {/* Multi-layer Himalayan mountain silhouette */}
+            <svg style={{ position: "absolute", bottom: 0, left: 0, width: "100%", height: "65%", pointerEvents: "none" }} viewBox="0 0 1440 400" preserveAspectRatio="none">
+              {/* Far background peaks — lightest */}
+              <polygon points="0,400 60,200 150,260 280,130 400,210 520,150 640,220 760,100 880,180 1000,130 1120,190 1240,110 1360,170 1440,130 1440,400" fill="rgba(0,180,80,0.06)" />
+              {/* Mid mountain range */}
+              <polygon points="0,400 80,240 200,300 340,160 480,260 600,180 720,250 850,120 980,210 1100,155 1220,230 1340,160 1440,200 1440,400" fill="rgba(0,150,60,0.09)" />
+              {/* Foreground hills */}
+              <polygon points="0,400 100,300 240,350 380,240 520,320 650,260 780,310 900,210 1040,290 1160,240 1300,300 1440,260 1440,400" fill="rgba(0,120,50,0.13)" />
+              {/* Snow caps on tallest peaks */}
+              <polygon points="760,100 790,130 730,130" fill="rgba(255,255,255,0.12)" />
+              <polygon points="280,130 310,158 250,158" fill="rgba(255,255,255,0.09)" />
+              <polygon points="1000,130 1030,158 970,158" fill="rgba(255,255,255,0.09)" />
+              {/* Rolling valley floor */}
+              <ellipse cx="720" cy="400" rx="800" ry="60" fill="rgba(0,80,30,0.15)" />
+            </svg>
+
+            {/* Decorative Kumaoni-inspired geometric border at top */}
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, height: 4,
+              background: "linear-gradient(90deg, transparent 0%, #00cc55 20%, #00ff88 50%, #00cc55 80%, transparent 100%)",
+              opacity: 0.4,
+            }} />
+            <div style={{
+              position: "absolute", top: 6, left: "10%", right: "10%", height: 1,
+              background: "linear-gradient(90deg, transparent 0%, rgba(0,255,100,0.3) 50%, transparent 100%)",
+            }} />
+
+            {/* Star/dot motif — Kumaoni style */}
+            {[0.1, 0.25, 0.5, 0.75, 0.9].map((x, i) => (
+              <div key={i} style={{
+                position: "absolute", top: 12, left: `${x * 100}%`,
+                width: 4, height: 4, borderRadius: "50%",
+                background: "rgba(0,255,100,0.5)",
+                transform: "translateX(-50%)",
+              }} />
+            ))}
+
+            <h2 className="font-pixel" style={{ position: "absolute", top: "8%", left: "-2%", fontSize: "18vw", color: "rgba(0,255,100,0.025)", lineHeight: 0.8, pointerEvents: "none", whiteSpace: "nowrap" }}>HILLS</h2>
+
+            <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              {/* Left: Main content */}
+              <div style={{ maxWidth: "52%" }}>
+                <p className="font-pixel" style={{ fontSize: 10, color: "#00cc55", letterSpacing: "0.4em", marginBottom: 20, opacity: 0.8 }}>
+                  ❖ PITHORAGARH · UTTARAKHAND · INDIA ❖
+                </p>
+                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1.05, marginBottom: 20, color: "#fff" }}>
+                  BUILT FOR<br />
+                  <span style={{ color: "rgba(255,255,255,0.5)" }}>THE HILLS.</span>
+                </h2>
+                {/* Kumaoni quote */}
+                <p style={{
+                  fontSize: 13, color: "rgba(0,255,100,0.7)", fontFamily: "'Inter', sans-serif",
+                  fontStyle: "italic", fontWeight: 300, letterSpacing: "0.06em",
+                  borderLeft: "2px solid rgba(0,255,100,0.3)", paddingLeft: 16, marginBottom: 20,
+                }}>
+                  "पहाड़ की मिट्टी, पैरों की ताकत" <br />
+                  <span style={{ fontSize: 11, opacity: 0.6 }}>The strength of the mountains, under your feet.</span>
+                </p>
+                <p className="font-sans" style={{ color: "rgba(255,255,255,0.5)", fontSize: 14, maxWidth: 440, lineHeight: 1.7 }}>
+                  From the high-altitude trails of Munsiyari to the ghats of Patal Bhuvaneshwar —
+                  Shoe World was born in Pithoragarh to equip every Pahadi adventure.
+                </p>
+                <div style={{ marginTop: 32, display: "flex", gap: 40, flexWrap: "wrap" }}>
+                  <div>
+                    <div className="font-pixel" style={{ fontSize: 32, color: "#fff" }}>500+</div>
+                    <div className="font-pixel" style={{ fontSize: 9, color: "#00cc55", marginTop: 4, letterSpacing: "0.2em" }}>STYLES</div>
+                  </div>
+                  <div>
+                    <div className="font-pixel" style={{ fontSize: 32, color: "#fff" }}>10+</div>
+                    <div className="font-pixel" style={{ fontSize: 9, color: "#00cc55", marginTop: 4, letterSpacing: "0.2em" }}>BRANDS</div>
+                  </div>
+                  <div>
+                    <div className="font-pixel" style={{ fontSize: 32, color: "#fff" }}>5000+</div>
+                    <div className="font-pixel" style={{ fontSize: 9, color: "#00cc55", marginTop: 4, letterSpacing: "0.2em" }}>CUSTOMERS</div>
+                  </div>
+                  <div>
+                    <div className="font-pixel" style={{ fontSize: 32, color: "#fff" }}>6000m</div>
+                    <div className="font-pixel" style={{ fontSize: 9, color: "#00cc55", marginTop: 4, letterSpacing: "0.2em" }}>ALTITUDE TESTED</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Uttarakhand districts badge */}
+              <div style={{
+                maxWidth: "38%", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12,
+              }}>
+                <div style={{
+                  border: "1px solid rgba(0,255,100,0.2)", borderRadius: 16, padding: "20px 24px",
+                  background: "rgba(0,50,20,0.3)", backdropFilter: "blur(8px)",
+                }}>
+                  <p className="font-pixel" style={{ fontSize: 9, color: "#00cc55", letterSpacing: "0.3em", marginBottom: 14 }}>OUR HOME TERRAIN</p>
+                  {["Pithoragarh", "Munsiyari", "Bageshwar", "Almora", "Champawat"].map((place) => (
+                    <div key={place} style={{
+                      display: "flex", alignItems: "center", gap: 8, marginBottom: 8,
+                    }}>
+                      <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#00cc55", flexShrink: 0 }} />
+                      <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,255,255,0.7)", letterSpacing: "0.05em" }}>{place}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="font-pixel" style={{ fontSize: 9, color: "rgba(0,255,100,0.4)", letterSpacing: "0.2em", textAlign: "right" }}>
+                  READY FOR EVERYWHERE.
+                </p>
               </div>
             </div>
           </section>
 
           {/* AND LOT MORE — teaser */}
           <section style={{
-            borderRadius: 40, padding: "8vw", minHeight: "50vh",
+            borderRadius: 32, padding: "5vw 6vw", minHeight: "42vh",
             background: "linear-gradient(145deg, #0d0d0d 0%, #050505 100%)",
             border: "1px solid rgba(255,255,255,0.06)",
             display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center",
             position: "relative", overflow: "hidden",
           }}>
-            {/* Subtle radial glow */}
             <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(255,0,60,0.04) 0%, transparent 70%)", pointerEvents: "none" }} />
-            <p className="font-pixel" style={{ fontSize: 11, color: "#ff003c", letterSpacing: "0.4em", marginBottom: 24, opacity: 0.8 }}>[ AND LOT MORE ]</p>
-            <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 72px)", lineHeight: 1.1, marginBottom: 28, color: "#fff" }}>
+            <p className="font-pixel" style={{ fontSize: 10, color: "#ff003c", letterSpacing: "0.4em", marginBottom: 20, opacity: 0.8 }}>[ AND LOT MORE ]</p>
+            <h2 className="font-pixel" style={{ fontSize: "clamp(28px, 4.5vw, 64px)", lineHeight: 1.1, marginBottom: 20, color: "#fff" }}>
               EXPLORE THE FULL
-              <br />
-              <span style={{ color: "rgba(255,255,255,0.4)" }}>COLLECTION</span>
+              <br /><span style={{ color: "rgba(255,255,255,0.35)" }}>COLLECTION</span>
             </h2>
             <p style={{
-              fontSize: 14, color: "rgba(255,255,255,0.4)", maxWidth: 540, lineHeight: 1.8,
-              fontFamily: "'Inter', sans-serif", fontWeight: 300, letterSpacing: "0.04em",
-              marginBottom: 40,
+              fontSize: 13, color: "rgba(255,255,255,0.38)", maxWidth: 500, lineHeight: 1.8,
+              fontFamily: "'Inter', sans-serif", fontWeight: 300, letterSpacing: "0.04em", marginBottom: 32,
             }}>
-              Formal wear, flip-flops, slip-ons, Oxford shoes, mules, wedges, and more — over 500+ styles waiting for you in-store.
+              Formal wear, flip-flops, slip-ons, Oxford shoes, mules, wedges, and more —<br />
+              over 500+ styles waiting for you in-store.
             </p>
-            <div style={{ display: "flex", gap: 16 }}>
+            <div style={{ display: "flex", gap: 14 }}>
               <button className="font-pixel" style={{
-                padding: "16px 36px", background: "#ff003c", border: "none", borderRadius: 30,
-                color: "#fff", fontSize: 11, cursor: "pointer", letterSpacing: "0.15em",
+                padding: "14px 32px", background: "#ff003c", border: "none", borderRadius: 30,
+                color: "#fff", fontSize: 10, cursor: "pointer", letterSpacing: "0.15em",
               }}>VIEW ALL CATEGORIES →</button>
               <button className="font-pixel" style={{
-                padding: "16px 36px", background: "transparent",
+                padding: "14px 32px", background: "transparent",
                 border: "1px solid rgba(255,255,255,0.15)", borderRadius: 30,
-                color: "rgba(255,255,255,0.6)", fontSize: 11, cursor: "pointer", letterSpacing: "0.15em",
+                color: "rgba(255,255,255,0.5)", fontSize: 10, cursor: "pointer", letterSpacing: "0.15em",
               }}>VISIT STORE</button>
             </div>
           </section>
