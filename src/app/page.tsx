@@ -11,7 +11,7 @@ const ExperienceEngine = dynamic(() => import("@/experience/ExperienceEngine"), 
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── Interactive Shoe Component with Mouse Rotation ── */
+/* ── Interactive Shoe Component — Full 360° drag rotation ── */
 function InteractiveShoe({ src, alt, width, height, className }: {
   src: string; alt: string; width: number; height: number; className?: string;
 }) {
@@ -19,56 +19,66 @@ function InteractiveShoe({ src, alt, width, height, className }: {
   const isDragging = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
   const rotation = useRef({ x: 0, y: 0 });
+  const velocity = useRef({ x: 0, y: 0 });
+  const animFrame = useRef<number>(0);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
     isDragging.current = true;
     lastPos.current = { x: e.clientX, y: e.clientY };
+    velocity.current = { x: 0, y: 0 };
+    cancelAnimationFrame(animFrame.current);
+    if (imgRef.current) imgRef.current.style.transition = 'none';
   }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging.current || !imgRef.current) return;
     const dx = e.clientX - lastPos.current.x;
     const dy = e.clientY - lastPos.current.y;
-    rotation.current.y += dx * 0.5;
-    rotation.current.x -= dy * 0.3;
-    rotation.current.x = Math.max(-30, Math.min(30, rotation.current.x));
-    imgRef.current.style.transform = `perspective(800px) rotateX(${rotation.current.x}deg) rotateY(${rotation.current.y}deg)`;
+    // Full 360° — NO clamping
+    rotation.current.y += dx * 0.8;
+    rotation.current.x += dy * 0.8;
+    velocity.current = { x: dy * 0.8, y: dx * 0.8 };
+    imgRef.current.style.transform = `perspective(600px) rotateX(${rotation.current.x}deg) rotateY(${rotation.current.y}deg)`;
     lastPos.current = { x: e.clientX, y: e.clientY };
+  }, []);
+
+  // Momentum spin after release
+  const spinMomentum = useCallback(() => {
+    if (!imgRef.current) return;
+    velocity.current.x *= 0.95;
+    velocity.current.y *= 0.95;
+    rotation.current.x += velocity.current.x;
+    rotation.current.y += velocity.current.y;
+    imgRef.current.style.transform = `perspective(600px) rotateX(${rotation.current.x}deg) rotateY(${rotation.current.y}deg)`;
+    if (Math.abs(velocity.current.x) > 0.1 || Math.abs(velocity.current.y) > 0.1) {
+      animFrame.current = requestAnimationFrame(spinMomentum);
+    }
   }, []);
 
   const handleMouseUp = useCallback(() => {
     isDragging.current = false;
-  }, []);
-
-  // Gentle hover tilt when not dragging
-  const handleHover = useCallback((e: React.MouseEvent) => {
-    if (isDragging.current || !imgRef.current) return;
-    const rect = imgRef.current.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const tiltX = ((e.clientY - cy) / (rect.height / 2)) * -8;
-    const tiltY = ((e.clientX - cx) / (rect.width / 2)) * 8;
-    imgRef.current.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-  }, []);
+    if (imgRef.current) imgRef.current.style.transition = 'transform 0.3s ease-out';
+    spinMomentum();
+  }, [spinMomentum]);
 
   const handleLeave = useCallback(() => {
-    if (!imgRef.current) return;
     isDragging.current = false;
-    rotation.current = { x: 0, y: 0 };
-    imgRef.current.style.transform = `perspective(800px) rotateX(0deg) rotateY(0deg)`;
-  }, []);
+    if (imgRef.current) imgRef.current.style.transition = 'transform 0.3s ease-out';
+    spinMomentum();
+  }, [spinMomentum]);
 
   return (
     <div
       ref={imgRef}
       className={`shoe-interactive ${className || ""}`}
       onMouseDown={handleMouseDown}
-      onMouseMove={(e) => { handleMouseMove(e); handleHover(e); }}
+      onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleLeave}
-      style={{ transition: isDragging.current ? "none" : "transform 0.4s ease-out", display: "inline-block" }}
+      style={{ display: "inline-block", cursor: "grab" }}
     >
-      <Image src={src} alt={alt} width={width} height={height} style={{ width: "100%", height: "auto", objectFit: "contain", pointerEvents: "none", mixBlendMode: "lighten" }} />
+      <Image src={src} alt={alt} width={width} height={height} style={{ width: "100%", height: "auto", objectFit: "contain", pointerEvents: "none", mixBlendMode: "screen" }} />
     </div>
   );
 }
@@ -188,29 +198,37 @@ export default function Home() {
 
       <main style={{ position: "relative", zIndex: 10, overflow: "hidden" }}>
 
-        {/* ── HERO SECTION ── transparent so WebGL shows through */}
-        <section ref={heroRef} style={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 10vw", position: "relative" }}>
+        {/* ── HERO SECTION — AC Motorsport + Utopia Tokyo style ── */}
+        <section ref={heroRef} style={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 8vw", position: "relative", overflow: "hidden" }}>
+          {/* Red/Blue glow accents behind text */}
+          <div style={{ position: "absolute", top: "20%", left: "-10%", width: "50vw", height: "50vh", background: "radial-gradient(ellipse, rgba(255,0,60,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+          <div style={{ position: "absolute", bottom: "10%", right: "-5%", width: "40vw", height: "40vh", background: "radial-gradient(ellipse, rgba(0,100,255,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
           <MountainSilhouette />
-          <div>
-            <p className="hero-elem font-pixel" style={{ fontSize: 12, color: "#ff003c", letterSpacing: "0.2em", marginBottom: 20 }}>
-              [ SYSTEM STATUS: ONLINE ]
-            </p>
-          </div>
-          <div>
-            <h1 className="hero-elem font-pixel rgb-glitch" data-text="SHOE WORLD" style={{ fontSize: "clamp(50px, 10vw, 150px)", lineHeight: 1, letterSpacing: "-0.02em" }}>
-              SHOE WORLD
-            </h1>
-          </div>
-          <div>
-            <p className="hero-elem font-pixel" style={{ fontSize: 12, color: "rgba(240,237,232,0.5)", letterSpacing: "0.15em", marginTop: 10 }}>
-              PITHORAGARH · UTTARAKHAND · INDIA
-            </p>
-          </div>
-          <div>
-            <p className="hero-elem font-sans" style={{ fontSize: 16, color: "rgba(240,237,232,0.45)", maxWidth: 500, marginTop: 30 }}>
-              Born in the shadow of the Himalayas. Engineered for the extremes. Designed for the streets.
-            </p>
-          </div>
+          
+          {/* Red accent line */}
+          <div className="hero-elem" style={{ width: 60, height: 3, background: "#ff003c", marginBottom: 20 }} />
+          
+          <p className="hero-elem font-pixel" style={{ fontSize: 11, color: "#ff003c", letterSpacing: "0.25em", marginBottom: 30 }}>
+            [ SYSTEM STATUS: ONLINE ]
+          </p>
+          
+          <h1 className="hero-elem font-pixel rgb-glitch" data-text="SHOE" style={{ fontSize: "clamp(60px, 12vw, 180px)", lineHeight: 0.9, letterSpacing: "-0.02em", color: "#fff" }}>
+            SHOE
+          </h1>
+          <h1 className="hero-elem font-pixel rgb-glitch" data-text="WORLD" style={{ fontSize: "clamp(60px, 12vw, 180px)", lineHeight: 0.9, letterSpacing: "-0.02em", color: "#fff", marginBottom: 40 }}>
+            WORLD
+          </h1>
+          
+          <p className="hero-elem font-pixel" style={{ fontSize: 11, color: "#00eaff", letterSpacing: "0.2em", marginBottom: 15 }}>
+            PITHORAGARH · UTTARAKHAND · INDIA
+          </p>
+          
+          <p className="hero-elem font-sans" style={{ fontSize: 15, color: "rgba(240,237,232,0.5)", maxWidth: 450, lineHeight: 1.6 }}>
+            Born in the shadow of the Himalayas. Engineered for the extremes. Designed for the streets.
+          </p>
+          
+          {/* Blue accent line */}
+          <div className="hero-elem" style={{ width: 40, height: 2, background: "#0066ff", marginTop: 30 }} />
         </section>
 
         {/* ── VIBRANT COLOR PANELS ── backgrounds via CSS classes, not inline */}
