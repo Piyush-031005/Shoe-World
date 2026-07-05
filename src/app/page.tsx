@@ -14,24 +14,31 @@ const ExperienceEngine = dynamic(() => import("@/experience/ExperienceEngine"), 
 gsap.registerPlugin(ScrollTrigger);
 
 /* ── 3D Model Component ── */
-function ShoeModel({ path }: { path: string }) {
+function ShoeModel({ path, color = "#ffffff", roughness = 0.5, metalness = 0.5, modelPosition = [0, -1, 0], modelRotation = [0, 0, 0], modelScale = 2.5 }: { 
+  path: string; color?: string; roughness?: number; metalness?: number; 
+  modelPosition?: number[]; modelRotation?: number[]; modelScale?: number;
+}) {
   const { scene } = useGLTF(path);
-  // Scale it up a bit since it's a dummy mesh, and add a shiny white material to make it visible
+  // Apply specific colors to match original images (Boots = black, Sports = orange, Sandals/Loafer = brown/green)
   useEffect(() => {
     scene.traverse((child: any) => {
       if (child.isMesh) {
-        child.material.color.set(0xffffff);
-        child.material.roughness = 0.2;
-        child.material.metalness = 0.5;
+        child.material.color.set(color);
+        child.material.roughness = roughness;
+        child.material.metalness = metalness;
       }
     });
-  }, [scene]);
-  return <primitive object={scene} scale={2.5} position={[0, -1, 0]} />;
+  }, [scene, color, roughness, metalness]);
+  
+  // @ts-ignore
+  return <primitive object={scene} scale={modelScale} position={modelPosition} rotation={modelRotation} />;
 }
 
 /* ── Interactive 3D Shoe Component (Real 3D) ── */
-function InteractiveShoeModel({ path, width, height, className }: {
+function InteractiveShoeModel({ path, width, height, className, color, roughness, metalness, position, rotation, scale }: {
   path: string; width: number; height: number; className?: string;
+  color?: string; roughness?: number; metalness?: number;
+  position?: number[]; rotation?: number[]; scale?: number;
 }) {
   return (
     <div
@@ -51,7 +58,11 @@ function InteractiveShoeModel({ path, width, height, className }: {
             dampingFactor={0.05}
           />
           <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-            <ShoeModel path={path} />
+            <ShoeModel 
+              path={path} 
+              color={color} roughness={roughness} metalness={metalness} 
+              modelPosition={position} modelRotation={rotation} modelScale={scale}
+            />
           </Float>
         </Suspense>
       </Canvas>
@@ -65,14 +76,15 @@ function SpeedLines() {
   const [lines, setLines] = useState<React.ReactNode[]>([]);
   useEffect(() => {
     const generated = [];
-    for (let i = 0; i < 40; i++) {
+    // Increase count to 80 to cover more area
+    for (let i = 0; i < 80; i++) {
       const rng = Math.random();
       const isRed = rng > 0.6;
       const isWhite = rng < 0.2;
       let color;
-      if (isRed) color = `rgba(255,0,60,${0.4 + Math.random() * 0.4})`;
-      else if (isWhite) color = `rgba(255,255,255,${0.3 + Math.random() * 0.3})`;
-      else color = `rgba(0,120,255,${0.4 + Math.random() * 0.4})`;
+      if (isRed) color = `rgba(255,0,60,${0.5 + Math.random() * 0.5})`;
+      else if (isWhite) color = `rgba(255,255,255,${0.4 + Math.random() * 0.4})`;
+      else color = `rgba(0,120,255,${0.5 + Math.random() * 0.5})`;
       
       const height = isWhite ? 2 : (Math.random() > 0.5 ? 2 : 4);
       
@@ -81,14 +93,14 @@ function SpeedLines() {
           key={i}
           className="speed-line-horizontal"
           style={{
-            top: `${Math.random() * 100}%`,
-            left: `-50%`,
-            width: `${200 + Math.random() * 600}px`,
+            top: `${Math.random() * 100}vh`,
+            left: `${-30 - Math.random() * 20}vw`,
+            width: `${200 + Math.random() * 800}px`,
             height: `${height}px`,
             background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
             boxShadow: `0 0 10px ${color}, 0 0 20px ${color}`,
             animationDelay: `${Math.random() * 4}s`,
-            animationDuration: `${1.5 + Math.random() * 2}s`,
+            animationDuration: `${1 + Math.random() * 1.5}s`,
           }}
         />
       );
@@ -194,10 +206,10 @@ export default function Home() {
             [ SYSTEM STATUS: ONLINE ]
           </p>
           
-          <h1 className="hero-elem font-pixel rgb-glitch" data-text="SHOE" style={{ fontSize: "clamp(60px, 12vw, 180px)", lineHeight: 0.9, letterSpacing: "-0.02em", color: "#fff" }}>
+          <h1 className="hero-elem font-pixel rgb-glitch" data-text="SHOE" style={{ fontSize: "clamp(60px, 12vw, 180px)", lineHeight: 1.1, letterSpacing: "-0.02em", color: "#fff", position: "relative", zIndex: 10, paddingBottom: 10 }}>
             SHOE
           </h1>
-          <h1 className="hero-elem font-pixel rgb-glitch" data-text="WORLD" style={{ fontSize: "clamp(60px, 12vw, 180px)", lineHeight: 0.9, letterSpacing: "-0.02em", color: "#fff", marginBottom: 40 }}>
+          <h1 className="hero-elem font-pixel rgb-glitch" data-text="WORLD" style={{ fontSize: "clamp(60px, 12vw, 180px)", lineHeight: 1.1, letterSpacing: "-0.02em", color: "#fff", marginBottom: 60, position: "relative", zIndex: 10 }}>
             WORLD
           </h1>
           
@@ -229,7 +241,12 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "45%" }}>
-                <InteractiveShoeModel path="/models/shoe1.glb" width={600} height={600} />
+                <InteractiveShoeModel 
+                  path="/models/shoe1.glb" 
+                  width={600} height={600} 
+                  color="#1a1a1a" roughness={0.4} metalness={0.6}
+                  position={[0, 0.5, 0]} rotation={[0.2, -0.4, 0]} scale={2.5}
+                />
               </div>
             </div>
           </section>
@@ -247,7 +264,12 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
-                <InteractiveShoeModel path="/models/shoe2.glb" width={800} height={800} />
+                <InteractiveShoeModel 
+                  path="/models/shoe2.glb" 
+                  width={800} height={800} 
+                  color="#ff5500" roughness={0.8} metalness={0.2}
+                  position={[0, 0.5, 0]} rotation={[0.2, 0.4, 0]} scale={2.5}
+                />
               </div>
             </div>
           </section>
@@ -265,7 +287,13 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "45%" }}>
-                <InteractiveShoeModel path="/models/shoe3.glb" width={600} height={600} />
+                {/* Fallback for sandals using shoe1 with green tint, aligned upwards */}
+                <InteractiveShoeModel 
+                  path="/models/shoe1.glb" 
+                  width={600} height={600} 
+                  color="#0d7a5a" roughness={0.6} metalness={0.3}
+                  position={[0, 0.5, 0]} rotation={[0.2, -0.4, 0]} scale={2.5}
+                />
               </div>
             </div>
           </section>
@@ -283,7 +311,12 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "45%" }}>
-                <InteractiveShoeModel path="/models/shoe1.glb" width={600} height={600} />
+                <InteractiveShoeModel 
+                  path="/models/shoe3.glb" 
+                  width={600} height={600} 
+                  color="#5c3a21" roughness={0.9} metalness={0.1}
+                  position={[0, 0.5, 0]} rotation={[0.2, -0.4, 0]} scale={2.8}
+                />
               </div>
             </div>
           </section>
