@@ -1,112 +1,94 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import dynamic from "next/dynamic";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
+import { Canvas } from "@react-three/fiber";
+import { useGLTF, OrbitControls, Float } from "@react-three/drei";
 
 const ExperienceEngine = dynamic(() => import("@/experience/ExperienceEngine"), { ssr: false });
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── Interactive Shoe Component — Full 360° drag rotation ── */
-function InteractiveShoe({ src, alt, width, height, className }: {
-  src: string; alt: string; width: number; height: number; className?: string;
+/* ── 3D Model Component ── */
+function ShoeModel({ path }: { path: string }) {
+  const { scene } = useGLTF(path);
+  // Scale it up a bit since it's a dummy mesh, and add a shiny white material to make it visible
+  useEffect(() => {
+    scene.traverse((child: any) => {
+      if (child.isMesh) {
+        child.material.color.set(0xffffff);
+        child.material.roughness = 0.2;
+        child.material.metalness = 0.5;
+      }
+    });
+  }, [scene]);
+  return <primitive object={scene} scale={2.5} position={[0, -1, 0]} />;
+}
+
+/* ── Interactive 3D Shoe Component (Real 3D) ── */
+function InteractiveShoeModel({ path, width, height, className }: {
+  path: string; width: number; height: number; className?: string;
 }) {
-  const imgRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-  const lastPos = useRef({ x: 0, y: 0 });
-  const rotation = useRef({ x: 0, y: 0 });
-  const velocity = useRef({ x: 0, y: 0 });
-  const animFrame = useRef<number>(0);
-
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    isDragging.current = true;
-    lastPos.current = { x: e.clientX, y: e.clientY };
-    velocity.current = { x: 0, y: 0 };
-    cancelAnimationFrame(animFrame.current);
-    if (imgRef.current) imgRef.current.style.transition = 'none';
-  }, []);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging.current || !imgRef.current) return;
-    const dx = e.clientX - lastPos.current.x;
-    const dy = e.clientY - lastPos.current.y;
-    // Full 360° — NO clamping
-    rotation.current.y += dx * 0.8;
-    rotation.current.x += dy * 0.8;
-    velocity.current = { x: dy * 0.8, y: dx * 0.8 };
-    imgRef.current.style.transform = `perspective(600px) rotateX(${rotation.current.x}deg) rotateY(${rotation.current.y}deg)`;
-    lastPos.current = { x: e.clientX, y: e.clientY };
-  }, []);
-
-  // Momentum spin after release
-  const spinMomentum = useCallback(() => {
-    if (!imgRef.current) return;
-    velocity.current.x *= 0.95;
-    velocity.current.y *= 0.95;
-    rotation.current.x += velocity.current.x;
-    rotation.current.y += velocity.current.y;
-    imgRef.current.style.transform = `perspective(600px) rotateX(${rotation.current.x}deg) rotateY(${rotation.current.y}deg)`;
-    if (Math.abs(velocity.current.x) > 0.1 || Math.abs(velocity.current.y) > 0.1) {
-      animFrame.current = requestAnimationFrame(spinMomentum);
-    }
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    isDragging.current = false;
-    if (imgRef.current) imgRef.current.style.transition = 'transform 0.3s ease-out';
-    spinMomentum();
-  }, [spinMomentum]);
-
-  const handleLeave = useCallback(() => {
-    isDragging.current = false;
-    if (imgRef.current) imgRef.current.style.transition = 'transform 0.3s ease-out';
-    spinMomentum();
-  }, [spinMomentum]);
-
   return (
     <div
-      ref={imgRef}
-      className={`shoe-interactive ${className || ""}`}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleLeave}
-      style={{ display: "inline-block", cursor: "grab" }}
+      className={`shoe-interactive-3d ${className || ""}`}
+      style={{ width: "100%", height, display: "inline-block", cursor: "grab", position: "relative", zIndex: 5 }}
     >
-      <Image src={src} alt={alt} width={width} height={height} style={{ width: "100%", height: "auto", objectFit: "contain", pointerEvents: "none", mixBlendMode: "screen" }} />
+      <Canvas camera={{ position: [0, 0, 8], fov: 45 }} gl={{ alpha: true }}>
+        <ambientLight intensity={1.5} />
+        <spotLight position={[10, 15, 10]} angle={0.3} penumbra={1} intensity={3} castShadow />
+        <pointLight position={[-10, -10, -10]} intensity={1} />
+        <Suspense fallback={null}>
+          <OrbitControls 
+            enableZoom={false} 
+            enablePan={false} 
+            autoRotate={false}
+            enableDamping={true}
+            dampingFactor={0.05}
+          />
+          <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+            <ShoeModel path={path} />
+          </Float>
+        </Suspense>
+      </Canvas>
     </div>
   );
 }
 
-/* ── Speed Lines Component (client-only to avoid hydration mismatch) ── */
+
+/* ── Speed Lines Component (Horizontal AC Motorsport Style) ── */
 function SpeedLines() {
   const [lines, setLines] = useState<React.ReactNode[]>([]);
   useEffect(() => {
     const generated = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 40; i++) {
       const rng = Math.random();
       const isRed = rng > 0.6;
       const isWhite = rng < 0.2;
       let color;
-      if (isRed) color = `rgba(255,0,60,${0.12 + Math.random() * 0.18})`;
-      else if (isWhite) color = `rgba(255,255,255,${0.04 + Math.random() * 0.06})`;
-      else color = `rgba(0,120,255,${0.1 + Math.random() * 0.15})`;
+      if (isRed) color = `rgba(255,0,60,${0.4 + Math.random() * 0.4})`;
+      else if (isWhite) color = `rgba(255,255,255,${0.3 + Math.random() * 0.3})`;
+      else color = `rgba(0,120,255,${0.4 + Math.random() * 0.4})`;
+      
+      const height = isWhite ? 2 : (Math.random() > 0.5 ? 2 : 4);
+      
       generated.push(
         <div
           key={i}
-          className="speed-line"
+          className="speed-line-horizontal"
           style={{
             top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 80}%`,
-            width: `${120 + Math.random() * 350}px`,
+            left: `-50%`,
+            width: `${200 + Math.random() * 600}px`,
+            height: `${height}px`,
             background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
-            animationDelay: `${Math.random() * 6}s`,
-            animationDuration: `${4 + Math.random() * 4}s`,
+            boxShadow: `0 0 10px ${color}, 0 0 20px ${color}`,
+            animationDelay: `${Math.random() * 4}s`,
+            animationDuration: `${1.5 + Math.random() * 2}s`,
           }}
         />
       );
@@ -247,7 +229,7 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "45%" }}>
-                <InteractiveShoe src="/shoe-boot.png" alt="Premium Boot" width={600} height={600} />
+                <InteractiveShoeModel path="/models/shoe1.glb" width={600} height={600} />
               </div>
             </div>
           </section>
@@ -265,7 +247,7 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
-                <InteractiveShoe src="/shoe-sports-orange.png" alt="Sports Shoe Orange" width={800} height={800} />
+                <InteractiveShoeModel path="/models/shoe2.glb" width={800} height={800} />
               </div>
             </div>
           </section>
@@ -283,7 +265,7 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "45%" }}>
-                <InteractiveShoe src="/shoe-sandal.png" alt="Premium Sandal" width={600} height={600} />
+                <InteractiveShoeModel path="/models/shoe3.glb" width={600} height={600} />
               </div>
             </div>
           </section>
@@ -301,7 +283,7 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "45%" }}>
-                <InteractiveShoe src="/shoe-loafer.png" alt="Premium Loafer" width={600} height={600} />
+                <InteractiveShoeModel path="/models/shoe1.glb" width={600} height={600} />
               </div>
             </div>
           </section>
