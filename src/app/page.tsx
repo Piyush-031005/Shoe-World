@@ -68,33 +68,41 @@ function InteractiveShoe({ src, alt, width, height, className }: {
       onMouseLeave={handleLeave}
       style={{ transition: isDragging.current ? "none" : "transform 0.4s ease-out", display: "inline-block" }}
     >
-      <Image src={src} alt={alt} width={width} height={height} style={{ width: "100%", height: "auto", objectFit: "contain", pointerEvents: "none" }} />
+      <Image src={src} alt={alt} width={width} height={height} style={{ width: "100%", height: "auto", objectFit: "contain", pointerEvents: "none", mixBlendMode: "lighten" }} />
     </div>
   );
 }
 
-/* ── Speed Lines Component ── */
+/* ── Speed Lines Component (client-only to avoid hydration mismatch) ── */
 function SpeedLines() {
-  const lines = [];
-  for (let i = 0; i < 20; i++) {
-    const isRed = Math.random() > 0.5;
-    lines.push(
-      <div
-        key={i}
-        className="speed-line"
-        style={{
-          top: `${Math.random() * 100}%`,
-          left: `${Math.random() * 80}%`,
-          width: `${100 + Math.random() * 300}px`,
-          background: isRed
-            ? `linear-gradient(90deg, transparent, rgba(255,0,60,${0.1 + Math.random() * 0.15}), transparent)`
-            : `linear-gradient(90deg, transparent, rgba(0,150,255,${0.08 + Math.random() * 0.12}), transparent)`,
-          animationDelay: `${Math.random() * 6}s`,
-          animationDuration: `${4 + Math.random() * 4}s`,
-        }}
-      />
-    );
-  }
+  const [lines, setLines] = useState<React.ReactNode[]>([]);
+  useEffect(() => {
+    const generated = [];
+    for (let i = 0; i < 30; i++) {
+      const rng = Math.random();
+      const isRed = rng > 0.6;
+      const isWhite = rng < 0.2;
+      let color;
+      if (isRed) color = `rgba(255,0,60,${0.12 + Math.random() * 0.18})`;
+      else if (isWhite) color = `rgba(255,255,255,${0.04 + Math.random() * 0.06})`;
+      else color = `rgba(0,120,255,${0.1 + Math.random() * 0.15})`;
+      generated.push(
+        <div
+          key={i}
+          className="speed-line"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 80}%`,
+            width: `${120 + Math.random() * 350}px`,
+            background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
+            animationDelay: `${Math.random() * 6}s`,
+            animationDuration: `${4 + Math.random() * 4}s`,
+          }}
+        />
+      );
+    }
+    setLines(generated);
+  }, []);
   return <div className="speed-lines">{lines}</div>;
 }
 
@@ -244,15 +252,15 @@ export default function Home() {
             </div>
           </section>
 
-          {/* SANDALS / ORANGE */}
-          <section className="color-panel panel-sandals" style={{
+          {/* SANDALS / DARK GREEN */}
+          <section className="color-panel panel-sandals-green" style={{
             borderRadius: 40, padding: "8vw", minHeight: "80vh", position: "relative", overflow: "hidden",
           }}>
             <h2 className="font-pixel" style={{ position: "absolute", top: "5%", left: "-3%", fontSize: "25vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none", whiteSpace: "nowrap" }}>FREE</h2>
             <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "60vh" }}>
               <div style={{ maxWidth: "40%" }}>
                 <h2 className="font-pixel" style={{ fontSize: "clamp(40px, 6vw, 100px)", lineHeight: 1, marginBottom: 20 }}>SANDALS</h2>
-                <p className="font-pixel" style={{ fontSize: 12, color: "#ff6600", letterSpacing: "0.2em", marginBottom: 20 }}>SUMMER · BREEZE · COMFORT</p>
+                <p className="font-pixel" style={{ fontSize: 12, color: "#00cc55", letterSpacing: "0.2em", marginBottom: 20 }}>SUMMER · BREEZE · COMFORT</p>
                 <p className="font-sans" style={{ color: "rgba(255,255,255,0.6)", fontSize: 16 }}>Lightweight, breathable, and designed for ultimate relaxation on Himalayan trails.</p>
                 <button className="font-pixel" style={{ marginTop: 30, padding: "14px 28px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 11, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
