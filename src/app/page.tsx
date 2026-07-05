@@ -51,8 +51,8 @@ function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness
 }) {
   return (
     <div style={{ width: "100%", height, cursor: "grab" }}>
-      {/* Camera z=5.4: shoe appears 1.3x bigger than original z=7 */}
-      <Canvas camera={{ position: [0, 0.1, 5.4], fov: 45 }} gl={{ alpha: true }}>
+      {/* Camera z=6.36 = 7/1.1: shoe appears exactly 1.1x bigger than original z=7 */}
+      <Canvas camera={{ position: [0, 0.05, 6.36], fov: 45 }} gl={{ alpha: true }}>
         <ambientLight intensity={2.5} />
         <spotLight position={[8, 12, 8]} angle={0.4} penumbra={1} intensity={5} castShadow />
         <spotLight position={[-6, -4, 6]} angle={0.4} penumbra={1} intensity={3} color={emissiveColor || "#ffffff"} />
@@ -277,12 +277,12 @@ export default function Home() {
                 <ShoeViewer
                   path="/models/boots.glb"
                   height={420}
-                  primaryColor="#1c0808"
-                  emissiveColor="#8b0000"
-                  roughness={0.5} metalness={0.35}
+                  primaryColor="#0a0a0a"
+                  emissiveColor="#6b0010"
+                  roughness={0.75} metalness={0.12}
                   modelPosition={[0, 0, 0]}
                   modelRotation={[0.1, -0.4, 0]}
-                  modelScale={2.2}
+                  modelScale={2.4}
                 />
               </div>
             </div>
@@ -319,12 +319,12 @@ export default function Home() {
                 <ShoeViewer
                   path="/models/sandles.glb"
                   height={420}
-                  primaryColor="#0a3d20"
-                  emissiveColor="#c8a415"
-                  roughness={0.55} metalness={0.4}
+                  primaryColor="#1a4020"
+                  emissiveColor="#b8900a"
+                  roughness={0.45} metalness={0.55}
                   modelPosition={[0, 0, 0]}
                   modelRotation={[0.1, -0.4, 0]}
-                  modelScale={1.8}
+                  modelScale={2.4}
                 />
               </div>
             </div>
@@ -344,12 +344,12 @@ export default function Home() {
                 <ShoeViewer
                   path="/models/loafer.glb"
                   height={420}
-                  primaryColor="#4a2810"
-                  emissiveColor="#c8860a"
-                  roughness={0.85} metalness={0.15}
+                  primaryColor="#6b3520"
+                  emissiveColor="#d4900a"
+                  roughness={0.92} metalness={0.05}
                   modelPosition={[0, 0, 0]}
                   modelRotation={[0.1, -0.4, 0]}
-                  modelScale={2.2}
+                  modelScale={2.4}
                 />
               </div>
             </div>
