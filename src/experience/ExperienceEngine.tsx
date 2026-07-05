@@ -59,6 +59,7 @@ export default function ExperienceEngine() {
         {/* Massive AC Motorsport Light Tunnel */}
         <LightTunnel />
         
+        {/* @ts-ignore — disableNormalPass prop type changed in newer postprocessing */}
         <EffectComposer disableNormalPass>
           <Noise opacity={0.03} blendFunction={BlendFunction.OVERLAY} />
         </EffectComposer>

@@ -51,8 +51,8 @@ function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness
 }) {
   return (
     <div style={{ width: "100%", height, cursor: "grab" }}>
-      {/* fov: 50 + position z=10 gives more breathing room so shoe never clips */}
-      <Canvas camera={{ position: [0, 0, 10], fov: 50 }} gl={{ alpha: true }}>
+      {/* Camera z=4: shoe appears ~1.75x bigger; scale slightly reduced to stay within frustum */}
+      <Canvas camera={{ position: [0, 0.2, 4], fov: 45 }} gl={{ alpha: true }}>
         <ambientLight intensity={2.5} />
         <spotLight position={[8, 12, 8]} angle={0.4} penumbra={1} intensity={5} castShadow />
         <spotLight position={[-6, -4, 6]} angle={0.4} penumbra={1} intensity={3} color={emissiveColor || "#ffffff"} />
@@ -211,12 +211,12 @@ export default function Home() {
         border: "1px solid rgba(255,255,255,0.1)", borderRadius: 50,
         padding: "10px 20px", display: "flex", gap: 30, alignItems: "center", letterSpacing: "0.1em",
       }}>
-        <div className="font-pixel" style={{ background: "#ff003c", width: 30, height: 30, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>SW</div>
-        <a href="#" className="font-pixel" style={{ color: "#F0EDE8", textDecoration: "none", fontSize: 10 }}>HOME</a>
-        <a href="#" className="font-pixel" style={{ color: "rgba(240,237,232,0.45)", textDecoration: "none", fontSize: 10 }}>COLLECTION</a>
-        <a href="#" className="font-pixel" style={{ color: "rgba(240,237,232,0.45)", textDecoration: "none", fontSize: 10 }}>ABOUT</a>
-        <a href="#" className="font-pixel" style={{ color: "rgba(240,237,232,0.45)", textDecoration: "none", fontSize: 10 }}>CONTACT</a>
-        <button className="font-pixel" style={{ background: "#F0EDE8", color: "#000", border: "none", padding: "10px 20px", borderRadius: 30, cursor: "pointer", fontSize: 10 }}>VISIT STORE +</button>
+        <a href="/" className="font-pixel" style={{ background: "#ff003c", width: 30, height: 30, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", textDecoration: "none" }}>SW</a>
+        <a href="/" className="font-pixel" style={{ color: "#F0EDE8", textDecoration: "none", fontSize: 10 }}>HOME</a>
+        <a href="/collection" className="font-pixel" style={{ color: "rgba(240,237,232,0.45)", textDecoration: "none", fontSize: 10 }}>COLLECTION</a>
+        <a href="/about" className="font-pixel" style={{ color: "rgba(240,237,232,0.45)", textDecoration: "none", fontSize: 10 }}>ABOUT</a>
+        <a href="/contact" className="font-pixel" style={{ color: "rgba(240,237,232,0.45)", textDecoration: "none", fontSize: 10 }}>CONTACT</a>
+        <a href="/contact" className="font-pixel" style={{ background: "#F0EDE8", color: "#000", textDecoration: "none", padding: "10px 20px", borderRadius: 30, fontSize: 10 }}>VISIT STORE +</a>
       </nav>
 
       <main style={{ position: "relative", zIndex: 10, overflow: "hidden" }}>
@@ -324,7 +324,7 @@ export default function Home() {
                   roughness={0.55} metalness={0.4}
                   modelPosition={[0, 0, 0]}
                   modelRotation={[0.1, -0.4, 0]}
-                  modelScale={2.0}
+                  modelScale={1.8}
                 />
               </div>
             </div>
