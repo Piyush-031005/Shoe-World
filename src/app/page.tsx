@@ -6,6 +6,7 @@ import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Canvas } from "@react-three/fiber";
+import * as THREE from "three";
 import { useGLTF, OrbitControls, Float, Environment, Center } from "@react-three/drei";
 import Image from "next/image";
 
@@ -39,6 +40,15 @@ function ShoeModel({
           child.material.needsUpdate = true;
         }
       });
+      
+      // Auto-scale normalization to perfectly fit the screen (0.85 scale to make them a bit smaller)
+      const box = new THREE.Box3().setFromObject(scene);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      if (maxDim > 0) {
+        scene.scale.setScalar(0.85 / maxDim);
+      }
     } catch (e) {
       console.error("Material Error:", e);
     }
@@ -414,9 +424,15 @@ export default function Home() {
                 <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>All-day comfort meets timeless style. Premium nubuck leather crafted for every occasion.</p>
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Image src="/shoe-casual.png" alt="Casual Shoes" width={600} height={480}
-                  style={{ width: "88%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 40px rgba(200,130,10,0.4))" }} />
+              <div style={{ width: "50%" }}>
+                <ShoeViewer
+                  path="/models/casual.glb"
+                  height={420}
+                  primaryColor="#8c5810"
+                  emissiveColor="#c8860a"
+                  roughness={0.8} metalness={0.1}
+                  modelPosition={[0, 0, 0]}
+                />
               </div>
             </div>
           </section>
