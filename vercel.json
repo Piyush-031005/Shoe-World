@@ -1,8 +1,5 @@
 {
   "framework": "nextjs",
-  "buildCommand": "cd shoe-world && npm install && npm run build",
-  "outputDirectory": "shoe-world/.next",
-  "installCommand": "cd shoe-world && npm install",
   "headers": [
     {
       "source": "/models/(.*).glb",
