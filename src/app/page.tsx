@@ -298,9 +298,17 @@ export default function Home() {
                 <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Pushing boundaries with aerodynamic design and explosive energy return.</p>
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Image src="/shoe-sports-orange.png" alt="Sports Shoe" width={600} height={480}
-                  style={{ width: "88%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 40px rgba(255,130,0,0.45))" }} />
+              <div style={{ width: "50%" }}>
+                <ShoeViewer
+                  path="/models/shoe3.glb"
+                  height={420}
+                  primaryColor="#cc4400"
+                  emissiveColor="#ff6600"
+                  roughness={0.35} metalness={0.45}
+                  modelPosition={[0, 0, 0]}
+                  modelRotation={[0.05, -0.3, 0]}
+                  modelScale={2.4}
+                />
               </div>
             </div>
           </section>
@@ -368,9 +376,17 @@ export default function Home() {
                 <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Step into streetwear culture. Iconic silhouettes for the bold and the fearless.</p>
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Image src="/shoe-sneaker.png" alt="Sneakers" width={600} height={520}
-                  style={{ width: "88%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 50px rgba(255,40,40,0.4)) drop-shadow(0 0 20px rgba(0,60,200,0.3))" }} />
+              <div style={{ width: "50%" }}>
+                <ShoeViewer
+                  path="/models/shoe1.glb"
+                  height={420}
+                  primaryColor="#080808"
+                  emissiveColor="#cc0020"
+                  roughness={0.6} metalness={0.2}
+                  modelPosition={[0, 0, 0]}
+                  modelRotation={[0.05, -0.3, 0]}
+                  modelScale={2.4}
+                />
               </div>
             </div>
           </section>
@@ -408,9 +424,17 @@ export default function Home() {
                 <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Ultra-lightweight, waterproof, and built for adventure — from Himalayan streams to city streets.</p>
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
-              <div style={{ width: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Image src="/shoe-crocs.png" alt="Crocs" width={600} height={440}
-                  style={{ width: "88%", height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 40px rgba(120,180,70,0.4))" }} />
+              <div style={{ width: "50%" }}>
+                <ShoeViewer
+                  path="/models/shoe2.glb"
+                  height={420}
+                  primaryColor="#2e5c1a"
+                  emissiveColor="#5a9040"
+                  roughness={0.8} metalness={0.08}
+                  modelPosition={[0, 0, 0]}
+                  modelRotation={[0.05, -0.3, 0]}
+                  modelScale={2.4}
+                />
               </div>
             </div>
           </section>
