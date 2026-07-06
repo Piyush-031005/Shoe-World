@@ -21,7 +21,7 @@ function ShoeModel({
   modelPosition = [0, 0, 0],
   modelRotation = [0, 0, 0],
   modelScale = 2.8,
-  fitScale = 0.85,
+  fitScale = 1.4,
 }: {
   path: string; primaryColor?: string; emissiveColor?: string;
   roughness?: number; metalness?: number;
@@ -43,7 +43,8 @@ function ShoeModel({
         }
       });
       
-      // Auto-scale normalization to perfectly fit the screen (0.85 scale to make them a bit smaller)
+      // Auto-scale normalization: reset scale first to avoid double-scaling bug in React strict mode
+      scene.scale.setScalar(1);
       const box = new THREE.Box3().setFromObject(scene);
       const size = new THREE.Vector3();
       box.getSize(size);
@@ -354,7 +355,7 @@ export default function Home() {
                   emissiveColor="#b8900a"
                   roughness={0.45} metalness={0.55}
                   modelPosition={[0, 0, 0]}
-                  fitScale={0.65}
+                  fitScale={1.0}
                   modelRotation={[0.1, -0.4, 0]}
                   modelScale={2.4}
                 />
@@ -380,7 +381,7 @@ export default function Home() {
                   emissiveColor="#d4900a"
                   roughness={0.92} metalness={0.05}
                   modelPosition={[0, 0, 0]}
-                  fitScale={0.65}
+                  fitScale={1.0}
                   modelRotation={[0.1, -0.4, 0]}
                   modelScale={2.4}
                 />
