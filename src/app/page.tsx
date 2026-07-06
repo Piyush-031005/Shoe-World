@@ -6,7 +6,7 @@ import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Canvas } from "@react-three/fiber";
-import { useGLTF, OrbitControls, Float, Environment } from "@react-three/drei";
+import { useGLTF, OrbitControls, Float, Environment, Center } from "@react-three/drei";
 import Image from "next/image";
 
 const ExperienceEngine = dynamic(() => import("@/experience/ExperienceEngine"), { ssr: false });
@@ -27,20 +27,30 @@ function ShoeModel({
 }) {
   const { scene } = useGLTF(path);
   useEffect(() => {
-    scene.traverse((child: any) => {
-      if (child.isMesh) {
-        child.material = child.material.clone();
-        child.material.color.set(primaryColor);
-        if (child.material.emissive) child.material.emissive.set(emissiveColor);
-        child.material.emissiveIntensity = 0.18;
-        child.material.roughness = roughness;
-        child.material.metalness = metalness;
-        child.material.needsUpdate = true;
-      }
-    });
+    try {
+      scene.traverse((child: any) => {
+        if (child.isMesh && child.material) {
+          child.material = child.material.clone();
+          if (child.material.color) child.material.color.set(primaryColor);
+          if (child.material.emissive) child.material.emissive.set(emissiveColor);
+          child.material.emissiveIntensity = 0.18;
+          child.material.roughness = roughness;
+          child.material.metalness = metalness;
+          child.material.needsUpdate = true;
+        }
+      });
+    } catch (e) {
+      console.error("Material Error:", e);
+    }
   }, [scene, primaryColor, emissiveColor, roughness, metalness]);
-  // @ts-ignore
-  return <primitive object={scene} scale={modelScale} position={modelPosition} rotation={modelRotation} />;
+  
+  return (
+    <group position={modelPosition as any} rotation={modelRotation as any} scale={modelScale}>
+      <Center autoCenter>
+        <primitive object={scene} />
+      </Center>
+    </group>
+  );
 }
 
 /* ── 3D Viewer Canvas — camera pushed back to prevent clipping ── */
