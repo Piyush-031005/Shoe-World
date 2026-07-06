@@ -21,10 +21,12 @@ function ShoeModel({
   modelPosition = [0, 0, 0],
   modelRotation = [0, 0, 0],
   modelScale = 2.8,
+  fitScale = 0.85,
 }: {
   path: string; primaryColor?: string; emissiveColor?: string;
   roughness?: number; metalness?: number;
   modelPosition?: number[]; modelRotation?: number[]; modelScale?: number;
+  fitScale?: number;
 }) {
   const { scene } = useGLTF(path);
   useEffect(() => {
@@ -47,16 +49,16 @@ function ShoeModel({
       box.getSize(size);
       const maxDim = Math.max(size.x, size.y, size.z);
       if (maxDim > 0) {
-        scene.scale.setScalar(0.85 / maxDim);
+        scene.scale.setScalar(fitScale / maxDim);
       }
     } catch (e) {
       console.error("Material Error:", e);
     }
-  }, [scene, primaryColor, emissiveColor, roughness, metalness]);
+  }, [scene, primaryColor, emissiveColor, roughness, metalness, fitScale]);
   
   return (
     <group position={modelPosition as any} rotation={modelRotation as any} scale={modelScale}>
-      <Center autoCenter>
+      <Center>
         <primitive object={scene} />
       </Center>
     </group>
@@ -64,10 +66,10 @@ function ShoeModel({
 }
 
 /* ── 3D Viewer Canvas — camera pushed back to prevent clipping ── */
-function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness, metalness, modelPosition, modelRotation, modelScale }: {
+function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness, metalness, modelPosition, modelRotation, modelScale, fitScale }: {
   path: string; height?: number;
   primaryColor?: string; emissiveColor?: string; roughness?: number; metalness?: number;
-  modelPosition?: number[]; modelRotation?: number[]; modelScale?: number;
+  modelPosition?: number[]; modelRotation?: number[]; modelScale?: number; fitScale?: number;
 }) {
   return (
     <div style={{ width: "100%", height, cursor: "grab" }}>
@@ -85,6 +87,7 @@ function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness
               path={path} primaryColor={primaryColor} emissiveColor={emissiveColor}
               roughness={roughness} metalness={metalness}
               modelPosition={modelPosition} modelRotation={modelRotation} modelScale={modelScale}
+              fitScale={fitScale}
             />
           </Float>
         </Suspense>
@@ -351,6 +354,7 @@ export default function Home() {
                   emissiveColor="#b8900a"
                   roughness={0.45} metalness={0.55}
                   modelPosition={[0, 0, 0]}
+                  fitScale={0.65}
                   modelRotation={[0.1, -0.4, 0]}
                   modelScale={2.4}
                 />
@@ -376,6 +380,7 @@ export default function Home() {
                   emissiveColor="#d4900a"
                   roughness={0.92} metalness={0.05}
                   modelPosition={[0, 0, 0]}
+                  fitScale={0.65}
                   modelRotation={[0.1, -0.4, 0]}
                   modelScale={2.4}
                 />
