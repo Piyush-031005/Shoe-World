@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
-import { useGLTF, OrbitControls, Float, Environment, Center } from "@react-three/drei";
+import { useGLTF, OrbitControls, Float, Environment } from "@react-three/drei";
 import Image from "next/image";
 
 const ExperienceEngine = dynamic(() => import("@/experience/ExperienceEngine"), { ssr: false });
@@ -21,7 +21,7 @@ function ShoeModel({
   modelPosition = [0, 0, 0],
   modelRotation = [0, 0, 0],
   modelScale = 2.8,
-  fitScale = 1.4,
+  fitScale = 2.4,
 }: {
   path: string; primaryColor?: string; emissiveColor?: string;
   roughness?: number; metalness?: number;
@@ -43,14 +43,20 @@ function ShoeModel({
         }
       });
       
-      // Auto-scale normalization: reset scale first to avoid double-scaling bug in React strict mode
+      // Auto-scale normalization and centering
       scene.scale.setScalar(1);
+      scene.position.set(0, 0, 0);
       const box = new THREE.Box3().setFromObject(scene);
       const size = new THREE.Vector3();
       box.getSize(size);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
       const maxDim = Math.max(size.x, size.y, size.z);
       if (maxDim > 0) {
-        scene.scale.setScalar(fitScale / maxDim);
+        const s = fitScale / maxDim;
+        scene.scale.setScalar(s);
+        // Center the model perfectly
+        scene.position.set(-center.x * s, -center.y * s, -center.z * s);
       }
     } catch (e) {
       console.error("Material Error:", e);
@@ -59,9 +65,7 @@ function ShoeModel({
   
   return (
     <group position={modelPosition as any} rotation={modelRotation as any} scale={modelScale}>
-      <Center>
-        <primitive object={scene} />
-      </Center>
+      <primitive object={scene} />
     </group>
   );
 }
@@ -355,7 +359,7 @@ export default function Home() {
                   emissiveColor="#b8900a"
                   roughness={0.45} metalness={0.55}
                   modelPosition={[0, 0, 0]}
-                  fitScale={1.0}
+                  fitScale={1.8}
                   modelRotation={[0.1, -0.4, 0]}
                   modelScale={2.4}
                 />
@@ -381,7 +385,7 @@ export default function Home() {
                   emissiveColor="#d4900a"
                   roughness={0.92} metalness={0.05}
                   modelPosition={[0, 0, 0]}
-                  fitScale={1.0}
+                  fitScale={1.8}
                   modelRotation={[0.1, -0.4, 0]}
                   modelScale={2.4}
                 />
