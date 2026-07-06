@@ -275,7 +275,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/boots.glb"
+                  path="/models/boots_new.glb"
                   height={420}
                   primaryColor="#0a0a0a"
                   emissiveColor="#6b0010"
@@ -300,7 +300,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/shoe3.glb"
+                  path="/models/sports.glb"
                   height={420}
                   primaryColor="#cc4400"
                   emissiveColor="#ff6600"
@@ -325,7 +325,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/sandles.glb"
+                  path="/models/sandles_new.glb"
                   height={420}
                   primaryColor="#1a4020"
                   emissiveColor="#b8900a"
@@ -350,7 +350,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/loafer.glb"
+                  path="/models/loafer_new.glb"
                   height={420}
                   primaryColor="#6b3520"
                   emissiveColor="#d4900a"
@@ -378,7 +378,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/shoe1.glb"
+                  path="/models/sneaker.glb"
                   height={420}
                   primaryColor="#080808"
                   emissiveColor="#cc0020"
@@ -426,7 +426,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/shoe2.glb"
+                  path="/models/crocs.glb"
                   height={420}
                   primaryColor="#2e5c1a"
                   emissiveColor="#5a9040"
