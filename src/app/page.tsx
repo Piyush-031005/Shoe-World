@@ -43,9 +43,10 @@ function ShoeModel({
         }
       });
       
-      // Auto-scale normalization and centering
+      // Reset scale before measuring to prevent compound scaling on re-renders
       scene.scale.setScalar(1);
-      scene.position.set(0, 0, 0);
+      
+      // Auto-scale normalization to perfectly fit the screen
       const box = new THREE.Box3().setFromObject(scene);
       const size = new THREE.Vector3();
       box.getSize(size);
