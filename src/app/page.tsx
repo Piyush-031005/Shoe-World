@@ -15,78 +15,111 @@ const ExperienceEngine = dynamic(() => import("@/experience/ExperienceEngine"), 
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── Shoe Image Viewer — uses existing PNGs with CSS 3D float animation ──
-   Replaces the GLB-based approach: no WebGL context limits, instant load,
-   same premium look via CSS perspective + keyframe float + rotate animations.
-───────────────────────────────────────────────────────────────── */
-function ShoeImageViewer({
-  src, alt, height = 420, floatDuration = 3.5, rotateDeg = 8,
-  initialRotateY = -12, filter,
+/* ── 3D Model: scale managed via React state to prevent flash/shrink ── */
+function ShoeModel({
+  path, primaryColor = "#888888", emissiveColor = "#000000",
+  roughness = 0.6, metalness = 0.3,
+  modelRotation = [0, 0, 0],
+  // kept for API compatibility but handled by auto-fit below
+  modelPosition: _mp, modelScale: _ms, fitScale: _fs,
 }: {
-  src: string; alt: string; height?: number;
-  floatDuration?: number; rotateDeg?: number; initialRotateY?: number;
-  filter?: string;
+  path: string; primaryColor?: string; emissiveColor?: string;
+  roughness?: number; metalness?: number;
+  modelRotation?: number[]; modelPosition?: number[]; modelScale?: number; fitScale?: number;
 }) {
-  const [hovered, setHovered] = useState(false);
+  const { scene } = useGLTF(path);
+
+  // ─── PERMANENT FIX ───────────────────────────────────────────────────────────
+  // Scale is managed as React state starting at 0 (invisible).
+  // useEffect measures the native bounds and sets the correct scale via setState.
+  // This means the group is ALWAYS scale=0 on first render, so there is never
+  // a frame where the model appears at its huge native size before shrinking.
+  // We also never mutate scene.scale/position on the cached useGLTF object,
+  // preventing contamination across remounts.
+  // ─────────────────────────────────────────────────────────────────────────────
+  const [displayScale, setDisplayScale] = useState<number>(0);
+  const [centerOffset, setCenterOffset] = useState<[number, number, number]>([0, 0, 0]);
+
+  useEffect(() => {
+    try {
+      scene.traverse((child: any) => {
+        if (child.isMesh && child.material) {
+          child.material = child.material.clone();
+          if (child.material.color) child.material.color.set(primaryColor);
+          if (child.material.emissive) child.material.emissive.set(emissiveColor);
+          child.material.emissiveIntensity = 0.18;
+          child.material.roughness = roughness;
+          child.material.metalness = metalness;
+          child.material.needsUpdate = true;
+        }
+      });
+
+      // Reset scene to identity so Box3 always measures the true native size,
+      // regardless of any previous scale/position set on the cached object.
+      scene.scale.set(1, 1, 1);
+      scene.position.set(0, 0, 0);
+      scene.updateMatrixWorld(true);
+
+      const box = new THREE.Box3().setFromObject(scene);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+      const maxDim = Math.max(size.x, size.y, size.z);
+
+      if (maxDim > 0) {
+        // Target 2.0 Three.js units: at camera z=4, fov=45 this fills ~60% of frame
+        const s = 2.0 / maxDim;
+        setDisplayScale(s);
+        setCenterOffset([-center.x * s, -center.y * s, -center.z * s]);
+      }
+    } catch (e) {
+      console.error("ShoeModel Error:", e);
+    }
+  }, [scene, primaryColor, emissiveColor, roughness, metalness]);
 
   return (
-    <div
-      style={{
-        width: "100%", height, display: "flex", alignItems: "center", justifyContent: "center",
-        perspective: "800px", cursor: "grab",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* Float Animation Layer */}
-      <div
-        style={{
-          width: "85%", height: "90%", position: "relative",
-          animation: hovered
-            ? `shoeFloat ${floatDuration * 0.75}s ease-in-out infinite`
-            : `shoeFloat ${floatDuration}s ease-in-out infinite`,
-          willChange: "transform",
-          transformStyle: "preserve-3d",
-        }}
-      >
-        {/* Rotation Transform Layer */}
-        <div
-          style={{
-            width: "100%", height: "100%", position: "absolute",
-            transform: `rotateY(${hovered ? 0 : initialRotateY}deg) rotateX(${hovered ? 0 : 4}deg)`,
-            transition: "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)",
-            transformStyle: "preserve-3d",
-          }}
-        >
-          {/* Drop shadow for depth */}
-          <div style={{
-            position: "absolute", bottom: "-8%", left: "15%", right: "15%", height: "18%",
-            background: "radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)",
-            filter: "blur(12px)",
-            animation: hovered
-              ? `shoeShadow ${floatDuration * 0.75}s ease-in-out infinite`
-              : `shoeShadow ${floatDuration}s ease-in-out infinite`,
-          }} />
-          <Image
-            src={src}
-            alt={alt}
-            fill
-            sizes="(max-width: 768px) 80vw, 40vw"
-            style={{
-              objectFit: "contain",
-              filter: filter,
-              transform: hovered ? `rotate(${rotateDeg}deg) scale(1.06)` : "rotate(0deg) scale(1)",
-              transition: "transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), filter 0.4s ease",
-            }}
-            priority={false}
-            draggable={false}
-          />
-        </div>
-      </div>
-    </div>
+    <group position={centerOffset} rotation={modelRotation as any} scale={displayScale}>
+      <primitive object={scene} />
+    </group>
   );
 }
 
+/* ── 3D Viewer Canvas — camera at z=4 for bigger, closer view ── */
+function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness, metalness, modelRotation,
+  modelPosition: _modelPosition, modelScale: _modelScale, fitScale: _fitScale,
+}: {
+  path: string; height?: number;
+  primaryColor?: string; emissiveColor?: string; roughness?: number; metalness?: number;
+  modelRotation?: number[]; modelPosition?: number[]; modelScale?: number; fitScale?: number;
+}) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, margin: "200px" });
+
+  return (
+    <div ref={ref} style={{ width: "100%", height, cursor: "grab" }}>
+      {isInView && (
+        <Canvas camera={{ position: [0, 0.3, 4], fov: 45 }} gl={{ alpha: true }}>
+          <ambientLight intensity={2.5} />
+          <spotLight position={[8, 12, 8]} angle={0.4} penumbra={1} intensity={5} castShadow />
+          <spotLight position={[-6, -4, 6]} angle={0.4} penumbra={1} intensity={3} color={emissiveColor || "#ffffff"} />
+          <pointLight position={[0, -8, 0]} intensity={1.5} />
+          <Suspense fallback={null}>
+            <Environment preset="city" />
+            <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1.5} enableDamping dampingFactor={0.05} />
+            <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
+              <ShoeModel
+                path={path} primaryColor={primaryColor} emissiveColor={emissiveColor}
+                roughness={roughness} metalness={metalness}
+                modelRotation={modelRotation}
+              />
+            </Float>
+          </Suspense>
+        </Canvas>
+      )}
+    </div>
+  );
+}
 
 /* ── Superman Cinematic Beams: 3 depth layers across full viewport ── */
 function CinematicBeams() {
@@ -289,7 +322,16 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
-                <ShoeImageViewer src="/shoe-boot.png" alt="Boots" height={420} floatDuration={3.8} initialRotateY={-14} rotateDeg={6} />
+                <ShoeViewer
+                  path="/models/boots_new.glb"
+                  height={420}
+                  primaryColor="#0a0a0a"
+                  emissiveColor="#6b0010"
+                  roughness={0.75} metalness={0.12}
+                  modelPosition={[0, 0, 0]}
+                  modelRotation={[0.1, -0.4, 0]}
+                  modelScale={2.4}
+                />
               </div>
             </div>
           </section>
@@ -305,7 +347,16 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
-                <ShoeImageViewer src="/shoe-sports-orange.png" alt="Sports Shoe" height={420} floatDuration={3.2} initialRotateY={14} rotateDeg={-7} />
+                <ShoeViewer
+                  path="/models/sports.glb"
+                  height={420}
+                  primaryColor="#cc4400"
+                  emissiveColor="#ff6600"
+                  roughness={0.35} metalness={0.45}
+                  modelPosition={[0, 0, 0]}
+                  modelRotation={[0.05, -0.3, 0]}
+                  modelScale={2.4}
+                />
               </div>
             </div>
           </section>
@@ -321,7 +372,17 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
-                <ShoeImageViewer src="/shoe-sandal.png" alt="Sandals" height={420} floatDuration={4.0} initialRotateY={-10} rotateDeg={5} />
+                <ShoeViewer
+                  path="/models/sandles_new.glb"
+                  height={420}
+                  primaryColor="#1a4020"
+                  emissiveColor="#b8900a"
+                  roughness={0.45} metalness={0.55}
+                  modelPosition={[0, 0, 0]}
+                  fitScale={0.7}
+                  modelRotation={[0.1, -0.4, 0]}
+                  modelScale={2.4}
+                />
               </div>
             </div>
           </section>
@@ -337,7 +398,17 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
-                <ShoeImageViewer src="/shoe-loafer.png" alt="Loafers" height={420} floatDuration={4.2} initialRotateY={12} rotateDeg={-6} />
+                <ShoeViewer
+                  path="/models/loafer_new.glb"
+                  height={420}
+                  primaryColor="#6b3520"
+                  emissiveColor="#d4900a"
+                  roughness={0.92} metalness={0.05}
+                  modelPosition={[0, 0, 0]}
+                  fitScale={0.7}
+                  modelRotation={[0.1, -0.4, 0]}
+                  modelScale={2.4}
+                />
               </div>
             </div>
           </section>
@@ -356,7 +427,17 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(26,58,10,0.35)", borderRadius: 30, color: "#1a3a0a", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
-                <ShoeImageViewer src="/shoe-sneaker.png" alt="Sneakers" height={420} floatDuration={3.5} initialRotateY={-12} rotateDeg={7} />
+                <ShoeViewer
+                  path="/models/sneaker.glb"
+                  height={420}
+                  primaryColor="#080808"
+                  emissiveColor="#cc0020"
+                  roughness={0.6} metalness={0.2}
+                  modelPosition={[0, 0, 0]}
+                  fitScale={1.2}
+                  modelRotation={[0.05, -0.3, 0]}
+                  modelScale={2.4}
+                />
               </div>
             </div>
           </section>
@@ -375,7 +456,14 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
-                <ShoeImageViewer src="/shoe-casual.png" alt="Casual Shoes" height={420} floatDuration={3.9} initialRotateY={12} rotateDeg={-5} />
+                <ShoeViewer
+                  path="/models/casual.glb"
+                  height={420}
+                  primaryColor="#8c5810"
+                  emissiveColor="#c8860a"
+                  roughness={0.8} metalness={0.1}
+                  modelPosition={[0, 0, 0]}
+                />
               </div>
             </div>
           </section>
@@ -394,7 +482,17 @@ export default function Home() {
                 <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
-                <ShoeImageViewer src="/shoe-crocs.png" alt="Crocs" height={420} floatDuration={4.5} initialRotateY={-10} rotateDeg={4} />
+                <ShoeViewer
+                  path="/models/crocs.glb"
+                  height={420}
+                  primaryColor="#2e5c1a"
+                  emissiveColor="#5a9040"
+                  roughness={0.8} metalness={0.08}
+                  modelPosition={[0, 0, 0]}
+                  fitScale={1.2}
+                  modelRotation={[0.05, -0.3, 0]}
+                  modelScale={2.4}
+                />
               </div>
             </div>
           </section>
