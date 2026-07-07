@@ -9,6 +9,7 @@ import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import { useGLTF, OrbitControls, Float, Environment } from "@react-three/drei";
 import Image from "next/image";
+import { useInView } from "framer-motion";
 
 const ExperienceEngine = dynamic(() => import("@/experience/ExperienceEngine"), { ssr: false });
 
@@ -21,7 +22,7 @@ function ShoeModel({
   modelPosition = [0, 0, 0],
   modelRotation = [0, 0, 0],
   modelScale = 2.8,
-  fitScale = 2.4,
+  fitScale = 1.2,
 }: {
   path: string; primaryColor?: string; emissiveColor?: string;
   roughness?: number; metalness?: number;
@@ -78,27 +79,31 @@ function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness
   primaryColor?: string; emissiveColor?: string; roughness?: number; metalness?: number;
   modelPosition?: number[]; modelRotation?: number[]; modelScale?: number; fitScale?: number;
 }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, margin: "200px" });
+
   return (
-    <div style={{ width: "100%", height, cursor: "grab" }}>
-      {/* Camera z=6.36 = 7/1.1: shoe appears exactly 1.1x bigger than original z=7 */}
-      <Canvas camera={{ position: [0, 0.05, 6.36], fov: 45 }} gl={{ alpha: true }}>
-        <ambientLight intensity={2.5} />
-        <spotLight position={[8, 12, 8]} angle={0.4} penumbra={1} intensity={5} castShadow />
-        <spotLight position={[-6, -4, 6]} angle={0.4} penumbra={1} intensity={3} color={emissiveColor || "#ffffff"} />
-        <pointLight position={[0, -8, 0]} intensity={1.5} />
-        <Suspense fallback={null}>
-          <Environment preset="city" />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1.5} enableDamping dampingFactor={0.05} />
-          <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
-            <ShoeModel
-              path={path} primaryColor={primaryColor} emissiveColor={emissiveColor}
-              roughness={roughness} metalness={metalness}
-              modelPosition={modelPosition} modelRotation={modelRotation} modelScale={modelScale}
-              fitScale={fitScale}
-            />
-          </Float>
-        </Suspense>
-      </Canvas>
+    <div ref={ref} style={{ width: "100%", height, cursor: "grab" }}>
+      {isInView && (
+        <Canvas camera={{ position: [0, 0.05, 6.36], fov: 45 }} gl={{ alpha: true }}>
+          <ambientLight intensity={2.5} />
+          <spotLight position={[8, 12, 8]} angle={0.4} penumbra={1} intensity={5} castShadow />
+          <spotLight position={[-6, -4, 6]} angle={0.4} penumbra={1} intensity={3} color={emissiveColor || "#ffffff"} />
+          <pointLight position={[0, -8, 0]} intensity={1.5} />
+          <Suspense fallback={null}>
+            <Environment preset="city" />
+            <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1.5} enableDamping dampingFactor={0.05} />
+            <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
+              <ShoeModel
+                path={path} primaryColor={primaryColor} emissiveColor={emissiveColor}
+                roughness={roughness} metalness={metalness}
+                modelPosition={modelPosition} modelRotation={modelRotation} modelScale={modelScale}
+                fitScale={fitScale}
+              />
+            </Float>
+          </Suspense>
+        </Canvas>
+      )}
     </div>
   );
 }
@@ -361,7 +366,7 @@ export default function Home() {
                   emissiveColor="#b8900a"
                   roughness={0.45} metalness={0.55}
                   modelPosition={[0, 0, 0]}
-                  fitScale={1.8}
+                  fitScale={0.7}
                   modelRotation={[0.1, -0.4, 0]}
                   modelScale={2.4}
                 />
@@ -387,7 +392,7 @@ export default function Home() {
                   emissiveColor="#d4900a"
                   roughness={0.92} metalness={0.05}
                   modelPosition={[0, 0, 0]}
-                  fitScale={1.8}
+                  fitScale={0.7}
                   modelRotation={[0.1, -0.4, 0]}
                   modelScale={2.4}
                 />
@@ -398,7 +403,7 @@ export default function Home() {
           {/* SNEAKERS */}
           <section className="color-panel" style={{
             borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden",
-            background: "#FF2E9B",
+            background: "#CEFF0F",
           }}>
             <h2 className="font-pixel" style={{ position: "absolute", top: "5%", right: "-5%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>AIR</h2>
             <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
@@ -631,3 +636,5 @@ export default function Home() {
     </div>
   );
 }
+
+
