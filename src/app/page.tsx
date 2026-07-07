@@ -630,50 +630,71 @@ export default function Home() {
             </div>
           </section>
 
-          {/* CATEGORIES GRID */}
+          {/* CATEGORIES IMAGE GRID */}
           <section style={{
-            display: "flex", flexDirection: "column", gap: "2vw", padding: "2vw 0"
+            background: "linear-gradient(to bottom, #FFEFB2 0%, #fffde7 100%)",
+            padding: "5vw 6vw",
+            display: "flex", flexDirection: "column", gap: "3vw",
+            position: "relative", zIndex: 10
           }}>
-            <h2 className="font-pixel" style={{ fontSize: "clamp(24px, 4vw, 48px)", color: "#fff", marginBottom: "1vw" }}>SHOP BY CATEGORY</h2>
+            <h2 className="font-pixel" style={{ fontSize: "clamp(28px, 4.5vw, 64px)", color: "#013E37", textAlign: "center", marginBottom: "1vw" }}>
+              SHOP BY CATEGORY
+            </h2>
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "1.5vw",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "24px",
+              width: "100%"
             }}>
               {[
-                { title: "MEN'S", desc: "Premium styles for every occasion.", color: "#0066ff" },
-                { title: "WOMEN'S", desc: "Elegance meets everyday comfort.", color: "#ff00aa" },
-                { title: "KIDS", desc: "Durable and fun for little feet.", color: "#ffcc00" },
-                { title: "TREKKING", desc: "Built for the toughest Himalayan trails.", color: "#00cc55" },
-                { title: "SPORTS", desc: "Performance gear to push your limits.", color: "#ff3c3c" },
-                { title: "FORMAL", desc: "Classic sophistication for the modern era.", color: "#c8860a" },
+                { title: "Men's Sneakers", img: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=800&auto=format&fit=crop" },
+                { title: "Women's Sneakers", img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop" },
+                { title: "Kids Collection", img: "https://images.unsplash.com/photo-1514090225634-933e8a4a259c?q=80&w=800&auto=format&fit=crop" },
+                { title: "Trekking & Outdoors", img: "https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=800&auto=format&fit=crop" },
+                { title: "Sports & Running", img: "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?q=80&w=800&auto=format&fit=crop" },
+                { title: "Formal Elegance", img: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=800&auto=format&fit=crop" },
+                { title: "Casual Everyday", img: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=800&auto=format&fit=crop" },
+                { title: "Accessories", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop" },
+                { title: "New Arrivals", img: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=800&auto=format&fit=crop" },
               ].map((cat, i) => (
                 <div key={i} style={{
-                  background: "linear-gradient(145deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.9) 100%)",
-                  border: "1px solid rgba(255,255,255,0.05)",
-                  borderRadius: 24, padding: "2.5vw",
-                  display: "flex", flexDirection: "column", justifyContent: "space-between",
-                  cursor: "pointer", minHeight: "220px",
-                  transition: "all 0.3s cubic-bezier(0.25, 1, 0.5, 1)",
+                  position: "relative", height: "380px", borderRadius: "12px",
+                  overflow: "hidden", cursor: "pointer",
+                  boxShadow: "0 10px 30px rgba(1, 62, 55, 0.15)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = cat.color;
-                  e.currentTarget.style.transform = "translateY(-6px)";
-                  e.currentTarget.style.boxShadow = `0 12px 30px -10px ${cat.color}40`;
+                  (e.currentTarget.querySelector('.bg-img') as HTMLElement).style.transform = "scale(1.08)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
+                  (e.currentTarget.querySelector('.bg-img') as HTMLElement).style.transform = "scale(1)";
                 }}
                 >
-                  <div>
-                    <h3 className="font-pixel" style={{ fontSize: 24, color: "#fff", marginBottom: 12 }}>{cat.title}</h3>
-                    <p className="font-sans" style={{ color: "rgba(255,255,255,0.5)", fontSize: 13, lineHeight: 1.6 }}>{cat.desc}</p>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 32 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: cat.color, boxShadow: `0 0 10px ${cat.color}` }} />
-                    <span className="font-pixel" style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", letterSpacing: "0.15em" }}>EXPLORE →</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    className="bg-img"
+                    src={cat.img} 
+                    alt={cat.title}
+                    style={{
+                      width: "100%", height: "100%", objectFit: "cover",
+                      transition: "transform 0.7s cubic-bezier(0.25, 1, 0.5, 1)"
+                    }}
+                  />
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: "linear-gradient(to top, rgba(1,62,55,0.9) 0%, rgba(1,62,55,0.1) 60%)",
+                    display: "flex", flexDirection: "column", justifyContent: "flex-end",
+                    padding: "30px",
+                  }}>
+                    <h3 className="font-sans" style={{ fontSize: "28px", fontWeight: 700, color: "#FFEFB2", marginBottom: 12 }}>
+                      {cat.title}
+                    </h3>
+                    <button className="font-sans" style={{
+                      padding: "12px 28px", background: "#FFEFB2", color: "#013E37", border: "none",
+                      borderRadius: "30px", fontWeight: 700, cursor: "pointer", alignSelf: "flex-start",
+                      fontSize: "14px", textTransform: "uppercase", letterSpacing: "0.05em"
+                    }}>
+                      Shop Now
+                    </button>
                   </div>
                 </div>
               ))}
