@@ -43,9 +43,10 @@ function ShoeModel({
         }
       });
       
-      // Reset scale before measuring to prevent compound scaling on re-renders
-      scene.scale.setScalar(1);
-      
+      // Reset scale to 1 before measuring to ensure we get the native unscaled size on remounts/hot-reloads
+      scene.scale.set(1, 1, 1);
+      scene.updateMatrixWorld(true);
+
       // Auto-scale normalization to perfectly fit the screen
       const box = new THREE.Box3().setFromObject(scene);
       const size = new THREE.Vector3();
@@ -397,7 +398,7 @@ export default function Home() {
           {/* SNEAKERS */}
           <section className="color-panel" style={{
             borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden",
-            background: "linear-gradient(145deg, #0d0d1a 0%, #0a0820 40%, #050510 100%)",
+            background: "#FF2E9B",
           }}>
             <h2 className="font-pixel" style={{ position: "absolute", top: "5%", right: "-5%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>AIR</h2>
             <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
