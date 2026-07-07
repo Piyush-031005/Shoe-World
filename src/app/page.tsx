@@ -68,8 +68,8 @@ function ShoeModel({
       const maxDim = Math.max(size.x, size.y, size.z);
 
       if (maxDim > 0) {
-        // Target 2.0 Three.js units: at camera z=4, fov=45 this fills ~60% of frame
-        const s = 2.0 / maxDim;
+        // Target 2.5 Three.js units: at camera z=4, fov=45 this fills ~75% of frame (increased size)
+        const s = 2.5 / maxDim;
         setDisplayScale(s);
         setCenterOffset([-center.x * s, -center.y * s, -center.z * s]);
       }
@@ -339,7 +339,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/boots_new.glb"
+                  path="/models/boots_new-compressed.glb"
                   height={420}
                   primaryColor="#0a0a0a"
                   emissiveColor="#6b0010"
@@ -364,7 +364,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/sports.glb"
+                  path="/models/sports_compressed.glb"
                   height={420}
                   primaryColor="#cc4400"
                   emissiveColor="#ff6600"
@@ -389,7 +389,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/sandles_new.glb"
+                  path="/models/sandles_new_compressed.glb"
                   height={420}
                   primaryColor="#1a4020"
                   emissiveColor="#b8900a"
@@ -415,7 +415,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/loafer_new.glb"
+                  path="/models/loafer_new-compressed.glb"
                   height={420}
                   primaryColor="#6b3520"
                   emissiveColor="#d4900a"
@@ -444,7 +444,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/sneaker.glb"
+                  path="/models/sneaker_compressed.glb"
                   height={420}
                   primaryColor="#080808"
                   emissiveColor="#cc0020"
@@ -499,7 +499,7 @@ export default function Home() {
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
-                  path="/models/crocs.glb"
+                  path="/models/crocs-compressed.glb"
                   height={420}
                   primaryColor="#2e5c1a"
                   emissiveColor="#5a9040"
