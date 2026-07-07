@@ -15,27 +15,33 @@ const ExperienceEngine = dynamic(() => import("@/experience/ExperienceEngine"), 
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── 3D Model with per-shoe color & emissive ── */
+/* ── 3D Model: scale managed via React state to prevent flash/shrink ── */
 function ShoeModel({
   path, primaryColor = "#888888", emissiveColor = "#000000",
   roughness = 0.6, metalness = 0.3,
-  modelPosition = [0, 0, 0],
   modelRotation = [0, 0, 0],
-  modelScale = 2.8,
-  fitScale = 1.2,
+  // kept for API compatibility but handled by auto-fit below
+  modelPosition: _mp, modelScale: _ms, fitScale: _fs,
 }: {
   path: string; primaryColor?: string; emissiveColor?: string;
   roughness?: number; metalness?: number;
-  modelPosition?: number[]; modelRotation?: number[]; modelScale?: number;
-  fitScale?: number;
+  modelRotation?: number[]; modelPosition?: number[]; modelScale?: number; fitScale?: number;
 }) {
   const { scene } = useGLTF(path);
+
+  // ─── PERMANENT FIX ───────────────────────────────────────────────────────────
+  // Scale is managed as React state starting at 0 (invisible).
+  // useEffect measures the native bounds and sets the correct scale via setState.
+  // This means the group is ALWAYS scale=0 on first render, so there is never
+  // a frame where the model appears at its huge native size before shrinking.
+  // We also never mutate scene.scale/position on the cached useGLTF object,
+  // preventing contamination across remounts.
+  // ─────────────────────────────────────────────────────────────────────────────
+  const [displayScale, setDisplayScale] = useState<number>(0);
+  const [centerOffset, setCenterOffset] = useState<[number, number, number]>([0, 0, 0]);
+
   useEffect(() => {
     try {
-      // Hide scene instantly before any frame renders to prevent the large→small shrink flash
-      scene.scale.set(0, 0, 0);
-      scene.updateMatrixWorld(true);
-
       scene.traverse((child: any) => {
         if (child.isMesh && child.material) {
           child.material = child.material.clone();
@@ -48,40 +54,44 @@ function ShoeModel({
         }
       });
 
-      // Measure at scale=1 to get native size, then apply correct fit scale
+      // Reset scene to identity so Box3 always measures the true native size,
+      // regardless of any previous scale/position set on the cached object.
       scene.scale.set(1, 1, 1);
+      scene.position.set(0, 0, 0);
       scene.updateMatrixWorld(true);
 
-      // Auto-scale normalization to perfectly fit the screen
       const box = new THREE.Box3().setFromObject(scene);
       const size = new THREE.Vector3();
       box.getSize(size);
       const center = new THREE.Vector3();
       box.getCenter(center);
       const maxDim = Math.max(size.x, size.y, size.z);
+
       if (maxDim > 0) {
-        const s = fitScale / maxDim;
-        scene.scale.setScalar(s);
-        // Center the model perfectly
-        scene.position.set(-center.x * s, -center.y * s, -center.z * s);
+        // Target 2.0 Three.js units: at camera z=4, fov=45 this fills ~60% of frame
+        const s = 2.0 / maxDim;
+        setDisplayScale(s);
+        setCenterOffset([-center.x * s, -center.y * s, -center.z * s]);
       }
     } catch (e) {
-      console.error("Material Error:", e);
+      console.error("ShoeModel Error:", e);
     }
-  }, [scene, primaryColor, emissiveColor, roughness, metalness, fitScale]);
-  
+  }, [scene, primaryColor, emissiveColor, roughness, metalness]);
+
   return (
-    <group position={modelPosition as any} rotation={modelRotation as any} scale={modelScale}>
+    <group position={centerOffset} rotation={modelRotation as any} scale={displayScale}>
       <primitive object={scene} />
     </group>
   );
 }
 
-/* ── 3D Viewer Canvas — camera pushed back to prevent clipping ── */
-function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness, metalness, modelPosition, modelRotation, modelScale, fitScale }: {
+/* ── 3D Viewer Canvas — camera at z=4 for bigger, closer view ── */
+function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness, metalness, modelRotation,
+  modelPosition: _modelPosition, modelScale: _modelScale, fitScale: _fitScale,
+}: {
   path: string; height?: number;
   primaryColor?: string; emissiveColor?: string; roughness?: number; metalness?: number;
-  modelPosition?: number[]; modelRotation?: number[]; modelScale?: number; fitScale?: number;
+  modelRotation?: number[]; modelPosition?: number[]; modelScale?: number; fitScale?: number;
 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, margin: "200px" });
@@ -89,7 +99,7 @@ function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness
   return (
     <div ref={ref} style={{ width: "100%", height, cursor: "grab" }}>
       {isInView && (
-        <Canvas camera={{ position: [0, 0.05, 6.36], fov: 45 }} gl={{ alpha: true }}>
+        <Canvas camera={{ position: [0, 0.3, 4], fov: 45 }} gl={{ alpha: true }}>
           <ambientLight intensity={2.5} />
           <spotLight position={[8, 12, 8]} angle={0.4} penumbra={1} intensity={5} castShadow />
           <spotLight position={[-6, -4, 6]} angle={0.4} penumbra={1} intensity={3} color={emissiveColor || "#ffffff"} />
@@ -101,8 +111,7 @@ function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness
               <ShoeModel
                 path={path} primaryColor={primaryColor} emissiveColor={emissiveColor}
                 roughness={roughness} metalness={metalness}
-                modelPosition={modelPosition} modelRotation={modelRotation} modelScale={modelScale}
-                fitScale={fitScale}
+                modelRotation={modelRotation}
               />
             </Float>
           </Suspense>
@@ -409,13 +418,13 @@ export default function Home() {
             borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden",
             background: "#ffefbe",
           }}>
-            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", right: "-5%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>AIR</h2>
+            <h2 className="font-pixel" style={{ position: "absolute", top: "5%", right: "-5%", fontSize: "22vw", color: "rgba(0,0,0,0.05)", lineHeight: 0.8, pointerEvents: "none" }}>AIR</h2>
             <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
               <div style={{ maxWidth: "38%" }}>
-                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1, marginBottom: 16 }}>SNEAKERS</h2>
-                <p className="font-pixel" style={{ fontSize: 11, color: "#ff3c3c", letterSpacing: "0.2em", marginBottom: 14 }}>STREET · CULTURE · ICONIC</p>
-                <p className="font-sans" style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.6 }}>Step into streetwear culture. Iconic silhouettes for the bold and the fearless.</p>
-                <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 30, color: "#fff", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
+                <h2 className="font-pixel" style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 1, marginBottom: 16, color: "#1a3a0a" }}>SNEAKERS</h2>
+                <p className="font-pixel" style={{ fontSize: 11, color: "#b32200", letterSpacing: "0.2em", marginBottom: 14 }}>STREET · CULTURE · ICONIC</p>
+                <p className="font-sans" style={{ color: "rgba(26,58,10,0.72)", fontSize: 14, lineHeight: 1.6 }}>Step into streetwear culture. Iconic silhouettes for the bold and the fearless.</p>
+                <button className="font-pixel" style={{ marginTop: 24, padding: "12px 24px", background: "transparent", border: "1px solid rgba(26,58,10,0.35)", borderRadius: 30, color: "#1a3a0a", fontSize: 10, cursor: "pointer" }}>SHOP NOW →</button>
               </div>
               <div style={{ width: "50%" }}>
                 <ShoeViewer
