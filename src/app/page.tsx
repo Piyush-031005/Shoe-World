@@ -32,6 +32,10 @@ function ShoeModel({
   const { scene } = useGLTF(path);
   useEffect(() => {
     try {
+      // Hide scene instantly before any frame renders to prevent the large→small shrink flash
+      scene.scale.set(0, 0, 0);
+      scene.updateMatrixWorld(true);
+
       scene.traverse((child: any) => {
         if (child.isMesh && child.material) {
           child.material = child.material.clone();
@@ -43,8 +47,8 @@ function ShoeModel({
           child.material.needsUpdate = true;
         }
       });
-      
-      // Reset scale to 1 before measuring to ensure we get the native unscaled size on remounts/hot-reloads
+
+      // Measure at scale=1 to get native size, then apply correct fit scale
       scene.scale.set(1, 1, 1);
       scene.updateMatrixWorld(true);
 
@@ -403,7 +407,7 @@ export default function Home() {
           {/* SNEAKERS */}
           <section className="color-panel" style={{
             borderRadius: 32, padding: "4vw 6vw", minHeight: "55vh", position: "relative", overflow: "hidden",
-            background: "#CEFF0F",
+            background: "#ffefbe",
           }}>
             <h2 className="font-pixel" style={{ position: "absolute", top: "5%", right: "-5%", fontSize: "22vw", color: "rgba(255,255,255,0.03)", lineHeight: 0.8, pointerEvents: "none" }}>AIR</h2>
             <div style={{ position: "relative", zIndex: 2, display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "45vh" }}>
