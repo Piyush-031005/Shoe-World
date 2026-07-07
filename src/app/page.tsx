@@ -630,6 +630,56 @@ export default function Home() {
             </div>
           </section>
 
+          {/* CATEGORIES GRID */}
+          <section style={{
+            display: "flex", flexDirection: "column", gap: "2vw", padding: "2vw 0"
+          }}>
+            <h2 className="font-pixel" style={{ fontSize: "clamp(24px, 4vw, 48px)", color: "#fff", marginBottom: "1vw" }}>SHOP BY CATEGORY</h2>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1.5vw",
+            }}>
+              {[
+                { title: "MEN'S", desc: "Premium styles for every occasion.", color: "#0066ff" },
+                { title: "WOMEN'S", desc: "Elegance meets everyday comfort.", color: "#ff00aa" },
+                { title: "KIDS", desc: "Durable and fun for little feet.", color: "#ffcc00" },
+                { title: "TREKKING", desc: "Built for the toughest Himalayan trails.", color: "#00cc55" },
+                { title: "SPORTS", desc: "Performance gear to push your limits.", color: "#ff3c3c" },
+                { title: "FORMAL", desc: "Classic sophistication for the modern era.", color: "#c8860a" },
+              ].map((cat, i) => (
+                <div key={i} style={{
+                  background: "linear-gradient(145deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.9) 100%)",
+                  border: "1px solid rgba(255,255,255,0.05)",
+                  borderRadius: 24, padding: "2.5vw",
+                  display: "flex", flexDirection: "column", justifyContent: "space-between",
+                  cursor: "pointer", minHeight: "220px",
+                  transition: "all 0.3s cubic-bezier(0.25, 1, 0.5, 1)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = cat.color;
+                  e.currentTarget.style.transform = "translateY(-6px)";
+                  e.currentTarget.style.boxShadow = `0 12px 30px -10px ${cat.color}40`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+                >
+                  <div>
+                    <h3 className="font-pixel" style={{ fontSize: 24, color: "#fff", marginBottom: 12 }}>{cat.title}</h3>
+                    <p className="font-sans" style={{ color: "rgba(255,255,255,0.5)", fontSize: 13, lineHeight: 1.6 }}>{cat.desc}</p>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 32 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: cat.color, boxShadow: `0 0 10px ${cat.color}` }} />
+                    <span className="font-pixel" style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", letterSpacing: "0.15em" }}>EXPLORE →</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* AND LOT MORE — teaser */}
           <section style={{
             borderRadius: 32, padding: "5vw 6vw", minHeight: "42vh",
