@@ -20,12 +20,13 @@ function ShoeModel({
   path, primaryColor = "#888888", emissiveColor = "#000000",
   roughness = 0.6, metalness = 0.3,
   modelRotation = [0, 0, 0],
+  targetSize = 2.5,
   // kept for API compatibility but handled by auto-fit below
   modelPosition: _mp, modelScale: _ms, fitScale: _fs,
 }: {
   path: string; primaryColor?: string; emissiveColor?: string;
   roughness?: number; metalness?: number;
-  modelRotation?: number[]; modelPosition?: number[]; modelScale?: number; fitScale?: number;
+  modelRotation?: number[]; targetSize?: number; modelPosition?: number[]; modelScale?: number; fitScale?: number;
 }) {
   const { scene } = useGLTF(path);
 
@@ -68,8 +69,7 @@ function ShoeModel({
       const maxDim = Math.max(size.x, size.y, size.z);
 
       if (maxDim > 0) {
-        // Target 2.5 Three.js units: at camera z=4, fov=45 this fills ~75% of frame (increased size)
-        const s = 2.5 / maxDim;
+        const s = targetSize / maxDim;
         setDisplayScale(s);
         setCenterOffset([-center.x * s, -center.y * s, -center.z * s]);
       }
@@ -102,15 +102,15 @@ function ModelLoader() {
 }
 
 /* ── 3D Viewer Canvas — camera at z=4 for bigger, closer view ── */
-function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness, metalness, modelRotation,
+function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness, metalness, modelRotation, targetSize = 2.5,
   modelPosition: _modelPosition, modelScale: _modelScale, fitScale: _fitScale,
 }: {
   path: string; height?: number;
   primaryColor?: string; emissiveColor?: string; roughness?: number; metalness?: number;
-  modelRotation?: number[]; modelPosition?: number[]; modelScale?: number; fitScale?: number;
+  modelRotation?: number[]; targetSize?: number; modelPosition?: number[]; modelScale?: number; fitScale?: number;
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, margin: "200px" });
+  const isInView = useInView(ref, { once: true, margin: "200px" });
 
   return (
     <div ref={ref} style={{ width: "100%", height, cursor: "grab" }}>
@@ -127,7 +127,7 @@ function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness
               <ShoeModel
                 path={path} primaryColor={primaryColor} emissiveColor={emissiveColor}
                 roughness={roughness} metalness={metalness}
-                modelRotation={modelRotation}
+                modelRotation={modelRotation} targetSize={targetSize}
               />
             </Float>
           </Suspense>
@@ -347,6 +347,7 @@ export default function Home() {
                   modelPosition={[0, 0, 0]}
                   modelRotation={[0.1, -0.4, 0]}
                   modelScale={2.4}
+                  targetSize={3.2}
                 />
               </div>
             </div>
@@ -372,6 +373,7 @@ export default function Home() {
                   modelPosition={[0, 0, 0]}
                   modelRotation={[0.05, -0.3, 0]}
                   modelScale={2.4}
+                  targetSize={3.2}
                 />
               </div>
             </div>
@@ -453,6 +455,7 @@ export default function Home() {
                   fitScale={1.2}
                   modelRotation={[0.05, -0.3, 0]}
                   modelScale={2.4}
+                  targetSize={3.2}
                 />
               </div>
             </div>
@@ -508,6 +511,7 @@ export default function Home() {
                   fitScale={1.2}
                   modelRotation={[0.05, -0.3, 0]}
                   modelScale={2.4}
+                  targetSize={3.2}
                 />
               </div>
             </div>
