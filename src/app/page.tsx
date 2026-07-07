@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
-import { useGLTF, OrbitControls, Float, Environment } from "@react-three/drei";
+import { useGLTF, OrbitControls, Float, Environment, Html, useProgress } from "@react-three/drei";
 import Image from "next/image";
 import { useInView } from "framer-motion";
 
@@ -85,6 +85,22 @@ function ShoeModel({
   );
 }
 
+/* ── 3D Loading State ── */
+function ModelLoader() {
+  const { progress } = useProgress();
+  return (
+    <Html center>
+      <div style={{
+        color: "#fff", fontFamily: "'Silkscreen', monospace", fontSize: 14,
+        background: "rgba(0,0,0,0.5)", padding: "8px 16px", borderRadius: 8,
+        border: "1px solid rgba(255,255,255,0.1)", whiteSpace: "nowrap"
+      }}>
+        LOADING 3D... {progress.toFixed(0)}%
+      </div>
+    </Html>
+  );
+}
+
 /* ── 3D Viewer Canvas — camera at z=4 for bigger, closer view ── */
 function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness, metalness, modelRotation,
   modelPosition: _modelPosition, modelScale: _modelScale, fitScale: _fitScale,
@@ -104,7 +120,7 @@ function ShoeViewer({ path, height = 520, primaryColor, emissiveColor, roughness
           <spotLight position={[8, 12, 8]} angle={0.4} penumbra={1} intensity={5} castShadow />
           <spotLight position={[-6, -4, 6]} angle={0.4} penumbra={1} intensity={3} color={emissiveColor || "#ffffff"} />
           <pointLight position={[0, -8, 0]} intensity={1.5} />
-          <Suspense fallback={null}>
+          <Suspense fallback={<ModelLoader />}>
             <Environment preset="city" />
             <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1.5} enableDamping dampingFactor={0.05} />
             <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
