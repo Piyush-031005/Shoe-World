@@ -414,6 +414,7 @@ export default function Home() {
                   emissiveColor="#cc0020"
                   roughness={0.6} metalness={0.2}
                   modelPosition={[0, 0, 0]}
+                  fitScale={1.2}
                   modelRotation={[0.05, -0.3, 0]}
                   modelScale={2.4}
                 />
@@ -468,6 +469,7 @@ export default function Home() {
                   emissiveColor="#5a9040"
                   roughness={0.8} metalness={0.08}
                   modelPosition={[0, 0, 0]}
+                  fitScale={1.2}
                   modelRotation={[0.05, -0.3, 0]}
                   modelScale={2.4}
                 />
